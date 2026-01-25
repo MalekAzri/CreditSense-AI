@@ -1,0 +1,24 @@
+# Environnement
+.env
+
+# Données & Modèles AI (Lourd)
+huggingface_cache/
+torch_cache/
+temp/
+
+# Dossier de documents (Test)
+**/docs/
+
+# Frontend
+**/node_modules/
+**/.next/
+**/.vercel/
+**/next-env.d.ts
+**/dist/
+**/build/
+
+# Fichiers Legacy & Documentation (AI Verification)
+**/verify_cin_clip.py
+**/verify_cin_ocr.py
+**/QDRANT_CLOUD_SETUP.md
+**/README.md
