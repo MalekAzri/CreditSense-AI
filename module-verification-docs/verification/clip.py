@@ -25,7 +25,7 @@ def get_clip_model():
 
     if _clip_model is None or _clip_processor is None:
         print(
-            f"🔁 Chargement du modèle CLIP "
+            f"[CACHE] Chargement du modèle CLIP "
             f"{CLIP_MODEL_ID} (local_only={MODELS_LOCAL_FILES_ONLY})"
         )
 

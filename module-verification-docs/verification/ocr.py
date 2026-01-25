@@ -36,7 +36,7 @@ def get_text_embedding_model():
 
     if _text_embedding_model is None:
         print(
-            f"🔁 Chargement du modèle OCR embedding "
+            f"[CACHE] Chargement du modèle OCR embedding "
             f"{TEXT_EMBEDDING_MODEL_ID} (local_only={MODELS_LOCAL_FILES_ONLY})"
         )
 

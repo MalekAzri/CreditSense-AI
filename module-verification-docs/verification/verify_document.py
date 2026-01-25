@@ -135,7 +135,7 @@ def verify_document(image_path: str, document_type: str = "CIN") -> Dict:
 
         ensure_collections_exist(document_type)
 
-        # 1️⃣ Vérification CLIP
+        # 1. Vérification CLIP
         print("Génération du vecteur CLIP...")
         clip_vector = generate_clip_vector(image_path)
         if clip_vector is not None:
@@ -150,7 +150,7 @@ def verify_document(image_path: str, document_type: str = "CIN") -> Dict:
         else:
             result["errors"].append("Échec génération vecteur CLIP")
 
-        # 2️⃣ Vérification OCR
+        # 2. Vérification OCR
         print("Extraction texte et vecteurs OCR...")
         extracted_text, doc_id, embeddings = extract_and_embed(image_path)
         result["extracted_text"] = extracted_text
@@ -179,7 +179,7 @@ def verify_document(image_path: str, document_type: str = "CIN") -> Dict:
         else:
             result["errors"].append("Échec génération vecteurs OCR")
 
-        # 3️⃣ Verdict final
+        # 3. Verdict final
         clip_valid = result["clip_similarity"] >= result["clip_threshold"]
         ocr_valid = result["ocr_similarity"] >= result["ocr_threshold"]
         result["is_valid"] = clip_valid and ocr_valid

@@ -67,7 +67,7 @@ def store_reference_mode(image_path: str):
             point_id=str(uuid.uuid4()),
             metadata={"source": "auto_reference", "type": "cin"}
         )
-        print("✔ CLIP stocké")
+        print("[OK] CLIP stocke")
 
     # -------- OCR --------
     extracted_text, doc_id, embeddings = extract_and_embed(image_path)
@@ -84,7 +84,7 @@ def store_reference_mode(image_path: str):
             }
         )
 
-    print(f"✔ {len(embeddings)} vecteurs OCR stockés")
+    print(f"[OK] {len(embeddings)} vecteurs OCR stockes")
 
 
 # =========================
@@ -148,14 +148,14 @@ def verify_mode(auto_store: bool = False):
     print("=" * 60)
 
     if best_result and best_result["is_valid"]:
-        print("✔ DOCUMENT RECONNU COMME CIN")
+        print("[OK] DOCUMENT RECONNU COMME CIN")
 
         #AUTO-STOCKAGE SI MODE 3
         if auto_store:
-            print("➕ Stockage automatique des vecteurs (CIN reconnu)")
+            print("[INFO] Stockage automatique des vecteurs (CIN reconnu)")
             store_reference_mode(best_page)
     else:
-        print("✖ DOCUMENT NON CIN / NON RECONNU")
+        print("[KO] DOCUMENT NON CIN / NON RECONNU")
 
     print("=" * 60)
 
