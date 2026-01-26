@@ -2,7 +2,7 @@
 
 Plateforme de gestion de crédit avec intégration Gmail et MongoDB.
 
-## 🏗️ Structure du Projet
+##  Structure du Projet
 
 ```
 credit_platform/
@@ -15,7 +15,7 @@ credit_platform/
 └─ .env.example     # Variables d'environnement
 ```
 
-## 🚀 Installation
+##  Installation
 
 ### 1. Installer les dépendances
 
@@ -36,7 +36,7 @@ Assurez-vous que MongoDB est en cours d'exécution sur `localhost:27017` ou conf
 5. Téléchargez le fichier JSON et renommez-le en `credentials.json`
 6. Placez `credentials.json` dans le dossier `scripts/`
 
-## 🎯 Utilisation
+##  Utilisation
 
 ### Lancer l'API FastAPI
 
@@ -56,10 +56,10 @@ python gmail_fetch.py
 ```
 
 Ce script va:
-1. ✅ Authentifier via OAuth (première fois uniquement)
-2. ✅ Récupérer les emails de votre boîte de réception
-3. ✅ Télécharger les pièces jointes dans `temp_files/`
-4. ✅ Envoyer chaque email à l'API FastAPI → MongoDB
+1.  Authentifier via OAuth (première fois uniquement)
+2.  Récupérer les emails de votre boîte de réception
+3.  Télécharger les pièces jointes dans `temp_files/`
+4.  Envoyer chaque email à l'API FastAPI → MongoDB
 
 ### Récupérer les messages WhatsApp
 
@@ -76,7 +76,7 @@ python whatsapp_fetch.py
 - Le endpoint `/webhook/whatsapp` traite automatiquement les messages
 
 **Types de messages supportés:**
-- ✅ Texte, Images, Documents, Audio, Vidéo
+-  Texte, Images, Documents, Audio, Vidéo
 
 ### Récupérer les transactions bancaires
 
@@ -88,10 +88,10 @@ python bank_fetch.py
 ```
 
 Ce script va:
-1. ✅ S'authentifier auprès de l'API bancaire
-2. ✅ Récupérer les transactions
-3. ✅ Télécharger les documents associés
-4. ✅ Envoyer chaque transaction à l'API FastAPI → MongoDB
+1.  S'authentifier auprès de l'API bancaire
+2.  Récupérer les transactions
+3.  Télécharger les documents associés
+4.  Envoyer chaque transaction à l'API FastAPI → MongoDB
 
 **Note:** Le script est générique et doit être adapté à votre plateforme bancaire spécifique.
 
@@ -138,7 +138,7 @@ Reçoit les messages WhatsApp via webhook (configuré dans Meta Business Suite).
 
 Vérifie le webhook WhatsApp (requis par Meta).
 
-## 🔐 Authentification
+##  Authentification
 
 ### Gmail (première exécution)
 
@@ -156,7 +156,7 @@ Configuration via Meta Business Suite - voir [WHATSAPP_SETUP.md](WHATSAPP_SETUP.
 
 Configuration selon votre API bancaire - voir [BANK_SETUP.md](BANK_SETUP.md)
 
-## 🚀 Intégrations Disponibles
+##  Intégrations Disponibles
 
 | Source | Script | Mode | Status |
 |--------|--------|------|--------|
@@ -164,7 +164,7 @@ Configuration selon votre API bancaire - voir [BANK_SETUP.md](BANK_SETUP.md)
 | WhatsApp | `whatsapp_fetch.py` | Push (webhook) | ✅ Prêt |
 | Plateforme Bancaire | `bank_fetch.py` | Pull/Push (adaptable) | ⚙️ À configurer |
 
-## 📝 Notes
+##  Notes
 
 - Les pièces jointes sont stockées dans `temp_files/`
 - Les messages sont automatiquement envoyés à l'API FastAPI
