@@ -37,8 +37,8 @@ QDRANT_COLLECTIONS = {
 
 # ========== Seuils ==========
 SIMILARITY_THRESHOLDS = {
-    "CIN": {"clip_threshold": 0.60, "ocr_threshold": 0.60},
-    "PASSPORT": {"clip_threshold": 0.80, "ocr_threshold": 0.70},
+    "CIN": {"clip_threshold": 0.70, "ocr_threshold": 0.70},
+    "PASSPORT": {"clip_threshold": 0.70, "ocr_threshold": 0.70},
 }
 
 # ========== OCR ==========

@@ -109,7 +109,7 @@ def extract_and_embed(image_path: str, lang: str = TESSERACT_LANG):
         if emb is not None:
             embeddings.append(
                 {
-                    "point_id": f"{document_id}_{idx}",
+                    "point_id": str(uuid.uuid4()),
                     "chunk_index": idx,
                     "embedding": emb,
                     "text_preview": chunk[:100],
