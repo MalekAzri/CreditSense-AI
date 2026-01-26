@@ -10,7 +10,7 @@ import os
 import uuid
 from pathlib import Path
 from datetime import datetime
-
+from app.workers.audio_worker import process_audio
 from app.db.session import get_db
 from app.db.models import Audio, AudioStatus
 from app.core.config import AUDIO_STORAGE_PATH, ALLOWED_AUDIO_EXTENSIONS, MAX_AUDIO_FILE_SIZE_MB
@@ -111,7 +111,8 @@ async def upload_audio(
             status_code=500,
             detail=f"Erreur lors de l'enregistrement en base de données : {str(e)}"
         )
-    
+    # 7. Déclencher le traitement asynchrone avec Celery
+    process_audio.delay(audio_entry.id)
     return {
         "status": "success",
         "message": "Audio uploadé avec succès",
