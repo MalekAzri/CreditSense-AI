@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold, cross_val_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, precision_score, recall_score
 import pickle
 
@@ -20,7 +20,7 @@ columns = [
     "risk"
 ]
 
-df = pd.read_csv("german.data", sep=" ", names=columns)
+df = pd.read_csv("data/raw/german.data", sep=" ", names=columns)
 df['risk'] = df['risk'].map({1: 0, 2: 1})
 
 X = df.drop('risk', axis=1)
@@ -47,30 +47,52 @@ log_reg.fit(X_train_scaled, y_train)
 
 # Random Forest (GridSearch rapide)
 rf_params = {
-    'n_estimators': [100],
-    'max_depth': [None],
-    'class_weight': ['balanced']
+    'n_estimators': [100, 200],
+    'max_depth': [None, 10],
+    'class_weight': ['balanced', None]
 }
-grid_search = GridSearchCV(RandomForestClassifier(random_state=42), rf_params, cv=2, scoring='roc_auc', n_jobs=-1)
-grid_search.fit(X_train_scaled, y_train)
-best_rf = grid_search.best_estimator_
+grid_search_rf = GridSearchCV(RandomForestClassifier(random_state=42), rf_params, cv=5, scoring='roc_auc', n_jobs=-1)
+grid_search_rf.fit(X_train_scaled, y_train)
+best_rf = grid_search_rf.best_estimator_
+
+# Gradient Boosting (Souvent plus précis que RF)
+gb_params = {
+    'n_estimators': [100, 200],
+    'learning_rate': [0.05, 0.1],
+    'max_depth': [3, 5]
+}
+grid_search_gb = GridSearchCV(GradientBoostingClassifier(random_state=42), gb_params, cv=5, scoring='roc_auc', n_jobs=-1)
+grid_search_gb.fit(X_train_scaled, y_train)
+best_gb = grid_search_gb.best_estimator_
 
 # ==========================================
 # 3. COLLECTE DES RÉSULTATS POUR AFFICHAGE UNIQUE
 # ==========================================
 results = []
-for name, model in [("LR (Baseline)", log_reg), ("RF (Optimisé)", best_rf)]:
+models = [
+    ("LR (Baseline)", log_reg), 
+    ("RF (Random Forest)", best_rf),
+    ("GB (Gradient Boosting)", best_gb)
+]
+
+for name, model in models:
     y_pred = model.predict(X_test_scaled)
     y_proba = model.predict_proba(X_test_scaled)[:, 1]
+    
+    # K-Fold Cross Validation
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=cv, scoring='roc_auc')
+    
     results.append({
         "Modèle": name,
-        "AUC": f"{roc_auc_score(y_test, y_proba):.3f}",
+        "CV AUC Moyenne": f"{cv_scores.mean():.3f} (+/- {cv_scores.std()*2:.3f})",
+        "Test AUC": f"{roc_auc_score(y_test, y_proba):.3f}",
         "Précision": f"{precision_score(y_test, y_pred):.3f}",
         "Rappel": f"{recall_score(y_test, y_pred):.3f}"
     })
 
 # Sauvegarde
-with open('credit_scoring_model.pkl', 'wb') as f:
+with open('models/credit_scoring_model.pkl', 'wb') as f:
     pickle.dump({'model': best_rf, 'scaler': scaler, 'columns': final_columns}, f)
 
 # ==========================================

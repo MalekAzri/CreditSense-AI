@@ -10,5 +10,5 @@ columns = [
     "risk"
 ]
 
-df = pd.read_csv("german.data", sep=" ", names=columns)
+df = pd.read_csv("data/raw/german.data", sep=" ", names=columns)
 print(df.head())

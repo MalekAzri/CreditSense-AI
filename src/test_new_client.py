@@ -35,13 +35,13 @@ def main():
     # 1. Chargement du modèle sauvegardé
     print("Chargement du modèle...")
     try:
-        with open('credit_scoring_model.pkl', 'rb') as f:
+        with open('models/credit_scoring_model.pkl', 'rb') as f:
             data = pickle.load(f)
             model = data['model']
             scaler = data['scaler']
             final_columns = data['columns']
     except FileNotFoundError:
-        print("Erreur : Le fichier 'credit_scoring_model.pkl' n'existe pas. Lancez d'abord credit_scoring.py.")
+        print("Erreur : Le fichier 'models/credit_scoring_model.pkl' n'existe pas. Lancez d'abord credit_scoring.py.")
         return
 
     # 2. Définition d'une nouvelle ligne de données (Exemple de client)
