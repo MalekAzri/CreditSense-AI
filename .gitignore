@@ -1,26 +1,61 @@
-# Environnement
+# Environment variables (contains MongoDB URI, API keys, secrets)
 .env
+*.env
 .env.local
+.env.*.local
+!.env.example
 
-# Données & Modèles AI (Lourd)
+# Gmail API credentials
+credentials.json
+token.json
+token.pickle
+
+# Gmail credentials in scripts/
+scripts/credentials.json
+scripts/token.json
+scripts/token.pickle
+
+# API keys and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+service-account.json
+client_secret*.json
+
+
+# ============================================
+# SENSITIVE DATA & GENERATED FILES
+# ============================================
+
+# Email data files (contains client data)
+messages_data.json
+synthetic_emails.json
+*.local.json
+
+# Temporary and debug files
+debug_output.txt
+debug_report.txt
+test_output.txt
+test_output_nlp.txt
+test_report.txt
+recent_files.txt
+
+
+# ============================================
+# AI Models & Data (Heavy Files)
+# ============================================
 huggingface_cache/
 torch_cache/
-temp/
-tmp/
-*.tmp
-*.temp
-# Model files (large files)
 *.pkl
 *.h5
 *.joblib
 *.model
 
-# Dossier de documents (Test)
-**/docs/
-# Documentation
-docs/_build/
 
-# Frontend
+# ============================================
+# FRONTEND
+# ============================================
 **/node_modules/
 **/.next/
 **/.vercel/
@@ -28,18 +63,62 @@ docs/_build/
 **/dist/
 **/build/
 
+
+# ============================================
+# PROJECT SPECIFIC / LEGACY
+# ============================================
+# Dossier de documents (Test)
+**/docs/
+# Documentation builds
+docs/_build/
+
 # Fichiers Legacy & Documentation (AI Verification)
 **/verify_cin_clip.py
 **/verify_cin_ocr.py
 **/QDRANT_CLOUD_SETUP.md
-**/README.md
+# **/README.md  <-- Kept commented out to avoid ignoring the main README, un-comment if intended to ignore all readmes in subdirs
 
-# Python
+
+# ============================================
+# SETUP GUIDES & CONFIGURATION DOCS
+# ============================================
+
+
+BANK_SETUP.md
+GMAIL_SETUP.md
+WHATSAPP_SETUP.md
+MONGODB_ATLAS_SETUP.md
+GUIDE_TEST.md
+LOGGING.md
+FILE_STORAGE.md
+
+
+
+# ============================================
+# PYTHON VIRTUAL ENVIRONMENTS
+# ============================================
+
+venv/
+env/
+.venv/
+.env/
+ENV/
+env.bak/
+venv.bak/
+pythonenv/
+
+
+# ============================================
+# PYTHON COMPILED & CACHE FILES
+# ============================================
+
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+
+# Distribution / packaging
 build/
 develop-eggs/
 dist/
@@ -52,45 +131,102 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# Virtual Environment
-venv/
-env/
-ENV/
-.venv
 
-# Jupyter Notebook
-.ipynb_checkpoints
-*.ipynb_checkpoints/
+# ============================================
+# TESTING & COVERAGE
+# ============================================
 
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-
-# Logs
-logs/
-*.log
-
-# Testing
-.pytest_cache/
-.coverage
 htmlcov/
 .tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.coverage
+.hypothesis/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-# Outputs
-outputs/*.png
-outputs/*.csv
-outputs/*.txt
 
-# Data files (if sensitive)
-# Uncomment if you don't want to track data
-# data/raw/*
-# data/processed/*
+# ============================================
+# LOGS
+# ============================================
+
+logs/
+*.log
+email_processor.log
+*.log.*
+
+
+# ============================================
+# TEMPORARY FILES & ATTACHMENTS
+# ============================================
+
+temp_files/
+temp/
+tmp/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+
+
+
+# ============================================
+# DATABASES (LOCAL)
+# ============================================
+
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+
+# ============================================
+# JUPYTER NOTEBOOKS
+# ============================================
+
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.ipynb_checkpoints
+
+
+
+
+
+# ============================================
+# MISC
+# ============================================
+
+# Backup files
+*.backup
+*.bkp
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Large media files (if accidentally added)
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
