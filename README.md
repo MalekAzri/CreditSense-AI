@@ -95,7 +95,7 @@ Ce script va:
 
 **Note:** Le script est générique et doit être adapté à votre plateforme bancaire spécifique.
 
-## 📡 Endpoints API
+##  Endpoints API
 
 ### POST `/messages/`
 
