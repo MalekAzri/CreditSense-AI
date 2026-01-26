@@ -1,5 +1,4 @@
 # Module Audio - CreditSense AI
-# CreditSense AI - Module d'Analyse Audio Comportementale
 
 ## 📋 Présentation du projet
 
@@ -371,7 +370,6 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 📝 Notes importantes pour le jury
 
 ### Point technique actuel
 
@@ -396,5 +394,325 @@ http://127.0.0.1:8000/docs
 9. ⏳ Scoring basé sur l'historique
 
 ---
+
+**Pipeline Data Détaillé**
+Vue d'ensemble du flux de données
+┌─────────────────────────────────────────────────────────────────┐
+│ ÉTAPE 1 : INGESTION                                             │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+    Message vocal WhatsApp    │    Format : OGG/MP3/M4A
+    Durée : 10-30 secondes    │    Taille : Max 16 MB
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ API FastAPI : POST /api/audio/upload                            │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ • Validation format (.ogg, .mp3, .m4a)                      │ │
+│ │ • Validation taille (< 16 MB)                               │ │
+│ │ • Génération nom unique (UUID)                              │ │
+│ │ • Sauvegarde : audio_storage/{uuid}.ogg                     │ │
+│ │ • Création entrée DB : status = "uploaded"                  │ │
+│ │ • Envoi task Celery : process_audio(audio_id)               │ │
+│ │ • Retour immédiat : audio_id au client                      │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ ÉTAPE 2 : STOCKAGE TEMPORAIRE                                   │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+         ┌───────────────────┼───────────────────┐
+         │                   │                   │
+         ▼                   ▼                   ▼
+┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+│ Système de     │  │ Base de        │  │ Queue Redis    │
+│ fichiers       │  │ données SQLite │  │                │
+│                │  │                │  │                │
+│ audio_storage/ │  │ Table: audios  │  │ Task:          │
+│ └─ abc123.ogg  │  │ ├─ id: 1       │  │ process_audio  │
+│                │  │ ├─ filename    │  │ (audio_id: 1)  │
+│                │  │ ├─ status:     │  │                │
+│                │  │ │  "uploaded"  │  │ État: pending  │
+│                │  │ └─ file_path   │  │                │
+└────────────────┘  └────────────────┘  └────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ ÉTAPE 3 : TRAITEMENT ASYNCHRONE (Celery Worker)                 │
+│ Status DB → "processing"                                         │
+└─────────────────────────────────────────────────────────────────┘
+                             │
+                             ▼
+         ┌───────────────────────────────────────┐
+         │  3.1 : TRANSCRIPTION (Whisper)        │
+         │  ┌─────────────────────────────────┐  │
+         │  │ Input  : audio_storage/abc123.ogg│ │
+         │  │ Model  : Whisper "base"          │ │
+         │  │ Output :                         │ │
+         │  │   • text: "Bonjour, je veux..." │ │
+         │  │   • language: "fr"               │ │
+         │  │   • segments: [...]              │ │
+         │  │ Temps  : ~10-15 secondes         │ │
+         │  └─────────────────────────────────┘  │
+         └───────────────┬───────────────────────┘
+                         │
+                         ▼
+         ┌───────────────────────────────────────┐
+         │  3.2 : FEATURES ACOUSTIQUES (librosa) │
+         │  ┌─────────────────────────────────┐  │
+         │  │ Input  : Fichier audio brut      │ │
+         │  │ Analyse:                         │ │
+         │  │   • Pitch (fréquence)            │ │
+         │  │     → mean: 180 Hz               │ │
+         │  │     → variance: 250 Hz²          │ │
+         │  │   • Énergie vocale (RMS)         │ │
+         │  │     → mean: 0.05                 │ │
+         │  │   • Taux de parole (tempo)       │ │
+         │  │     → 120 mots/minute            │ │
+         │  │   • Détection pauses              │ │
+         │  │     → count: 5 pauses            │ │
+         │  │ Temps  : ~20-25 secondes         │ │
+         │  └─────────────────────────────────┘  │
+         └───────────────┬───────────────────────┘
+                         │
+                         ▼
+         ┌───────────────────────────────────────┐
+         │  3.3 : ANALYSE NLP (Transformers)     │
+         │  ┌─────────────────────────────────┐  │
+         │  │ Input  : text (transcription)    │ │
+         │  │ Model  : BERT multilingue        │ │
+         │  │ Output :                         │ │
+         │  │   • sentiment_score: 0.65        │ │
+         │  │     (-1 = négatif, +1 = positif) │ │
+         │  │   • label: "4 stars"             │ │
+         │  │   • confidence: 0.87             │ │
+         │  │ Temps  : ~5 secondes             │ │
+         │  └─────────────────────────────────┘  │
+         └───────────────┬───────────────────────┘
+                         │
+                         ▼
+         ┌───────────────────────────────────────┐
+         │  3.4 : SCORING COMPORTEMENTAL         │
+         │  ┌─────────────────────────────────┐  │
+         │  │ Entrées combinées:               │ │
+         │  │   • Transcription                │ │
+         │  │   • Features acoustiques         │ │
+         │  │   • Sentiment                    │ │
+         │  │                                  │ │
+         │  │ Calculs:                         │ │
+         │  │   • stress_level = f(pitch_var,  │ │
+         │  │     energy, pauses)              │ │
+         │  │     → 0.32 (moyen)               │ │
+         │  │                                  │ │
+         │  │   • confidence_level = f(        │ │
+         │  │     sentiment, pauses)           │ │
+         │  │     → 0.78 (bon)                 │ │
+         │  │                                  │ │
+         │  │   • coherence_score = f(         │ │
+         │  │     text_length, segments)       │ │
+         │  │     → 0.85 (cohérent)            │ │
+         │  │ Temps  : <1 seconde              │ │
+         │  └─────────────────────────────────┘  │
+         └───────────────┬───────────────────────┘
+                         │
+                         ▼
+         ┌───────────────────────────────────────┐
+         │  3.5 : VECTORISATION (Sentence-Trans) │
+         │  ┌─────────────────────────────────┐  │
+         │  │ Input  : text (transcription)    │ │
+         │  │ Model  : paraphrase-multilingual│ │
+         │  │          -MiniLM-L12-v2          │ │
+         │  │ Output : Vecteur 384 dimensions  │ │
+         │  │   [0.21, 0.83, 0.15, ..., 0.62]  │ │
+         │  │ Usage  : Recherche similarité    │ │
+         │  │          dans Qdrant             │ │
+         │  │ Temps  : <1 seconde              │ │
+         │  └─────────────────────────────────┘  │
+         └───────────────┬───────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ ÉTAPE 4 : PERSISTANCE DES DONNÉES                               │
+└─────────────────────────────────────────────────────────────────┘
+                         │
+         ┌───────────────┼───────────────┐
+         │               │               │
+         ▼               ▼               ▼
+┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+│ SQLite         │  │ SQLite         │  │ Qdrant Cloud   │
+│ (Transcription)│  │ (Metadata)     │  │ (Vecteurs)     │
+│                │  │                │  │                │
+│ Table:         │  │ Table:         │  │ Collection:    │
+│ transcriptions │  │ processing_    │  │ audio_         │
+│                │  │ metadata       │  │ embeddings     │
+│ ├─ audio_id: 1 │  │                │  │                │
+│ ├─ text: "..." │  │ ├─ audio_id: 1 │  │ Point:         │
+│ ├─ language:   │  │ ├─ sentiment:  │  │ ├─ id:         │
+│ │  "fr"        │  │ │  0.65        │  │ │  "audio_1"   │
+│ └─ confidence: │  │ ├─ stress:     │  │ ├─ vector:     │
+│    1.0         │  │ │  0.32        │  │ │  [0.21,...]  │
+│                │  │ ├─ confidence: │  │ └─ payload:    │
+│                │  │ │  0.78        │  │    {sentiment, │
+│                │  │ ├─ coherence:  │  │     stress,    │
+│                │  │ │  0.85        │  │     language,  │
+│                │  │ ├─ pitch_mean: │  │     outcome}   │
+│                │  │ │  180         │  │                │
+│                │  │ ├─ speech_rate:│  │                │
+│                │  │ │  120         │  │                │
+│                │  │ └─ pause_count:│  │                │
+│                │     5            │  │                │
+└────────────────┘  └────────────────┘  └────────────────┘
+         │               │               │
+         └───────────────┴───────────────┘
+                         │
+                         ▼
+                  Status DB → "completed"
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ ÉTAPE 5 : EXPOSITION DES RÉSULTATS (API)                        │
+└─────────────────────────────────────────────────────────────────┘
+
+Client peut maintenant accéder aux données via :
+
+GET /api/audio/status/1
+└─> {
+      "audio_id": 1,
+      "status": "completed",
+      "upload_date": "2026-01-26T01:22:00",
+      "processing_completed_at": "2026-01-26T01:22:45"
+    }
+
+GET /api/audio/results/1
+└─> {
+      "audio_id": 1,
+      "transcription": {
+        "text": "Bonjour, je veux emprunter...",
+        "language": "fr",
+        "confidence": 1.0
+      },
+      "analysis": {
+        "sentiment_score": 0.65,
+        "stress_level": 0.32,
+        "confidence_level": 0.78,
+        "coherence_score": 0.85,
+        "solvability_score": null  (calculé avec Qdrant plus tard)
+      }
+    }
+
+    
+
+Flux de données en mode PRÉDICTION (POST /predict)
+
+┌─────────────────────────────────────────────────────────────────┐
+│ INGESTION (Identique)                                            │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ TRAITEMENT ALLÉGÉ (Mode rapide)                                 │
+└─────────────────────────────────────────────────────────────────┘
+                         │
+         ┌───────────────┴───────────────┐
+         │                               │
+         ▼                               ▼
+┌──────────────────────┐      ┌──────────────────────┐
+│ Whisper              │      │ Sentence-Transformers│
+│ (Transcription)      │      │ (Vectorisation)      │
+│ Temps: ~10s          │      │ Temps: <1s           │
+└──────────┬───────────┘      └──────────┬───────────┘
+           │                              │
+           └──────────────┬───────────────┘
+                          │
+                          ▼
+         ┌────────────────────────────────┐
+         │ Vecteur 384D généré            │
+         │ [0.21, 0.83, ..., 0.62]        │
+         └────────────┬───────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ RECHERCHE QDRANT (Similarité cosinus)                           │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ Query: vector=[0.21, 0.83, ..., 0.62]                       │ │
+│ │ Limit: 10                                                   │ │
+│ │ Score threshold: 0.7                                        │ │
+│ │                                                             │ │
+│ │ Recherche dans la base historique...                       │ │
+│ │ Temps: <1 seconde                                           │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ RÉSULTATS SIMILARITÉ (Top 10)                                   │
+└─────────────────────────────────────────────────────────────────┘
+
+Audio #5  | Similarité: 0.94 | Sentiment: 0.70 | Stress: 0.30 | Outcome: repaid
+Audio #12 | Similarité: 0.91 | Sentiment: 0.68 | Stress: 0.35 | Outcome: repaid
+Audio #23 | Similarité: 0.88 | Sentiment: 0.60 | Stress: 0.40 | Outcome: default
+Audio #7  | Similarité: 0.87 | Sentiment: 0.72 | Stress: 0.28 | Outcome: repaid
+Audio #18 | Similarité: 0.86 | Sentiment: 0.65 | Stress: 0.32 | Outcome: repaid
+Audio #31 | Similarité: 0.85 | Sentiment: 0.69 | Stress: 0.33 | Outcome: repaid
+Audio #9  | Similarité: 0.84 | Sentiment: 0.58 | Stress: 0.45 | Outcome: default
+Audio #14 | Similarité: 0.83 | Sentiment: 0.71 | Stress: 0.29 | Outcome: repaid
+Audio #22 | Similarité: 0.82 | Sentiment: 0.67 | Stress: 0.34 | Outcome: repaid
+Audio #28 | Similarité: 0.81 | Sentiment: 0.64 | Stress: 0.36 | Outcome: repaid
+
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ CALCUL DES SCORES PRÉDITS (Agrégation)                          │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ Moyenne des 10 similaires:                                  │ │
+│ │                                                             │ │
+│ │ predicted_sentiment = (0.70+0.68+0.60+...+0.64) / 10       │ │
+│ │                     = 0.68                                  │ │
+│ │                                                             │ │
+│ │ predicted_stress    = (0.30+0.35+0.40+...+0.36) / 10       │ │
+│ │                     = 0.32                                  │ │
+│ │                                                             │ │
+│ │ predicted_confidence = moyenne similaire = 0.75             │ │
+│ │                                                             │ │
+│ │ solvability_score = (8 repaid / 10 total) × 100            │ │
+│ │                   = 80/100                                  │ │
+│ │                                                             │ │
+│ │ prediction_confidence = moyenne des similarités             │ │
+│ │                       = 0.87                                │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ RÉPONSE CLIENT (JSON)                                            │
+└─────────────────────────────────────────────────────────────────┘
+
+{
+  "status": "success",
+  "mode": "prediction",
+  "transcription": "Bonjour, je veux emprunter 5000€",
+  "language": "fr",
+  "predicted_scores": {
+    "sentiment_score": 0.68,
+    "stress_level": 0.32,
+    "confidence_level": 0.75,
+    "solvability_score": 80
+  },
+  "prediction_confidence": 0.87,
+  "based_on_audios": 10,
+  "reasoning": "8/10 clients similaires ont remboursé",
+  "similar_audios": [
+    {
+      "audio_id": 5,
+      "similarity": 0.94,
+      "outcome": "repaid"
+    },
+    ...
+  ]
+}
+
+Temps total: ~15 secondes (3x plus rapide que l'analyse complète)
 
 **Dernière mise à jour :** 26 Janvier 2026
