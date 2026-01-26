@@ -1,13 +1,24 @@
 # Environnement
 .env
+.env.local
 
 # Données & Modèles AI (Lourd)
 huggingface_cache/
 torch_cache/
 temp/
+tmp/
+*.tmp
+*.temp
+# Model files (large files)
+*.pkl
+*.h5
+*.joblib
+*.model
 
 # Dossier de documents (Test)
 **/docs/
+# Documentation
+docs/_build/
 
 # Frontend
 **/node_modules/
@@ -22,3 +33,64 @@ temp/
 **/verify_cin_ocr.py
 **/QDRANT_CLOUD_SETUP.md
 **/README.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Outputs
+outputs/*.png
+outputs/*.csv
+outputs/*.txt
+
+# Data files (if sensitive)
+# Uncomment if you don't want to track data
+# data/raw/*
+# data/processed/*
