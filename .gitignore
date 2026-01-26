@@ -1,0 +1,263 @@
+# ============================================
+# SECRETS & CREDENTIALS - NEVER PUSH
+# ============================================
+
+# Environment variables (contains MongoDB URI, API keys, secrets)
+.env
+*.env
+.env.local
+.env.*.local
+!.env.example
+
+# Gmail API credentials
+credentials.json
+token.json
+token.pickle
+
+# Gmail credentials in scripts/
+scripts/credentials.json
+scripts/token.json
+scripts/token.pickle
+
+# API keys and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+service-account.json
+client_secret*.json
+
+
+# ============================================
+# SENSITIVE DATA & GENERATED FILES
+# ============================================
+
+# Email data files (contains client data)
+messages_data.json
+synthetic_emails.json
+*.local.json
+
+# Temporary and debug files
+debug_output.txt
+debug_report.txt
+test_output.txt
+test_output_nlp.txt
+test_report.txt
+recent_files.txt
+
+
+# ============================================
+# SETUP GUIDES & CONFIGURATION DOCS
+# ============================================
+# These files contain sensitive architecture info
+# Keep only README.md as public documentation
+
+BANK_SETUP.md
+GMAIL_SETUP.md
+WHATSAPP_SETUP.md
+MONGODB_ATLAS_SETUP.md
+GUIDE_TEST.md
+LOGGING.md
+FILE_STORAGE.md
+
+# Pattern for any future setup guides
+*_SETUP.md
+*_CONFIG.md
+GUIDE_*.md
+
+
+# ============================================
+# PYTHON VIRTUAL ENVIRONMENTS
+# ============================================
+
+venv/
+env/
+.venv/
+.env/
+ENV/
+env.bak/
+venv.bak/
+pythonenv/
+
+
+# ============================================
+# PYTHON COMPILED & CACHE FILES
+# ============================================
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+
+# ============================================
+# TESTING & COVERAGE
+# ============================================
+
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.coverage
+.hypothesis/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+
+# ============================================
+# LOGS
+# ============================================
+
+logs/
+*.log
+email_processor.log
+*.log.*
+
+
+# ============================================
+# TEMPORARY FILES & ATTACHMENTS
+# ============================================
+
+temp_files/
+temp/
+tmp/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+
+# ============================================
+# IDE & EDITORS
+# ============================================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+*~
+.vim/
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+
+# ============================================
+# OPERATING SYSTEM FILES
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.fuse_hidden*
+
+
+# ============================================
+# DATABASES (LOCAL)
+# ============================================
+
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+
+# ============================================
+# JUPYTER NOTEBOOKS
+# ============================================
+
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.ipynb_checkpoints
+
+
+# ============================================
+# DOCKER (if used in future)
+# ============================================
+
+*.dockerignore
+docker-compose.override.yml
+.dockerenv
+
+
+# ============================================
+# MISC
+# ============================================
+
+# Backup files
+*.backup
+*.bkp
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Large media files (if accidentally added)
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
