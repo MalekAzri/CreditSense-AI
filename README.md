@@ -160,9 +160,9 @@ Configuration selon votre API bancaire - voir [BANK_SETUP.md](BANK_SETUP.md)
 
 | Source | Script | Mode | Status |
 |--------|--------|------|--------|
-| Gmail | `gmail_fetch.py` | Pull (polling) | ✅ Prêt |
-| WhatsApp | `whatsapp_fetch.py` | Push (webhook) | ✅ Prêt |
-| Plateforme Bancaire | `bank_fetch.py` | Pull/Push (adaptable) | ⚙️ À configurer |
+| Gmail | `gmail_fetch.py` | Pull (polling) |  Prêt |
+| WhatsApp | `whatsapp_fetch.py` | Push (webhook) | à configurer |
+| Plateforme Bancaire | `bank_fetch.py` | Pull/Push (adaptable) | À configurer |
 
 ##  Notes
 
