@@ -1,7 +1,7 @@
 # CreditSense AI
 
-CreditSense AI est une plateforme intelligente d'analyse de prêts et d'aide à la prise de décision destinée aux analystes financiers.
-Elle permet de centraliser les demandes de crédit, d'évaluer les risques, de détecter la fraude documentaire, d'analyser les messages textuels et vocaux, et de fournir des recommandations explicables basées sur l'intelligence artificielle.
+CreditSense AI est une plateforme intelligente d’analyse de prêts et d’aide à la prise de décision destinée aux analystes financiers.
+Elle permet de centraliser les demandes de crédit, d’évaluer les risques, de détecter la fraude documentaire, d’analyser les messages textuels et vocaux, et de fournir des recommandations explicables basées sur l’intelligence artificielle.
 
 ---
 
@@ -9,10 +9,10 @@ Elle permet de centraliser les demandes de crédit, d'évaluer les risques, de d
 
 La plateforme vise à assister les analystes dans :
 
-* l'évaluation du risque crédit,
+* l’évaluation du risque crédit,
 * la détection de fraudes (documents, messages, comportements),
 * la centralisation des données multi-sources (documents, emails, WhatsApp, audio),
-* la justification claire des décisions prises par l'IA.
+* la justification claire des décisions prises par l’IA.
 
 ---
 
@@ -29,7 +29,7 @@ Fonctionnalités principales :
   * état du prêt,
   * alertes de risque,
   * décisions prises par les analystes.
-* Page d'analyse détaillée (au clic sur un prêt) :
+* Page d’analyse détaillée (au clic sur un prêt) :
 
   * pourcentage de risque,
   * recommandation IA (accorder ou refuser le crédit),
@@ -37,14 +37,14 @@ Fonctionnalités principales :
   * documents détectés comme fraudés avec leurs pourcentages de crédibilité.
 * Section paramètres :
 
-  * intégration d'APIs externes (emails, plateformes bancaires, etc.).
+  * intégration d’APIs externes (emails, plateformes bancaires, etc.) (sources de données à analyser).
 * Authentification des analystes (login sécurisé).
 
 ---
 
 ### 2. Module de Vérification de Documents (module-verification-docs)
 
-Ce module permet de vérifier l'authenticité des documents d'identité tels que les cartes CIN et les passeports.
+Ce module permet de vérifier l’authenticité des documents d’identité tels que les cartes CIN et les passeports.
 
 Fonctionnement :
 
@@ -54,7 +54,7 @@ Fonctionnement :
   * extraire le texte des documents,
   * analyser le contenu visuel,
   * convertir images et textes en représentations vectorielles.
-* Lorsqu'un nouveau document est soumis, il est comparé aux vecteurs de référence afin de mesurer la similarité et détecter les fraudes ou incohérences.
+* Lorsqu’un nouveau document est soumis, il est comparé aux vecteurs de référence afin de mesurer la similarité et détecter les fraudes ou incohérences.
 
 Fonctionnalités :
 
@@ -67,11 +67,11 @@ Fonctionnalités :
 
 ### 3. Module de Calcul de Risque (Credit Scoring)
 
-Ce module utilise le Machine Learning pour prédire la capacité d'un client à rembourser un prêt.
+Ce module utilise le Machine Learning pour prédire la capacité d’un client à rembourser un prêt.
 
 #### Présentation
 
-Il s'appuie sur le jeu de données German Credit afin d'entraîner des modèles capables de classer une demande de crédit en deux catégories :
+Il s’appuie sur le jeu de données German Credit afin d’entraîner des modèles capables de classer une demande de crédit en deux catégories :
 
 * Accordé
 * Refusé
@@ -128,7 +128,7 @@ python src/test_new_client.py
 
 #### Structure du module
 
-* `src/` : scripts de traitement et d'entraînement
+* `src/` : scripts de traitement et d’entraînement
 * `data/` : données brutes et transformées
 * `models/` : modèle final sauvegardé
 
@@ -143,13 +143,13 @@ Technologies utilisées :
 
 ### 4. Module de Vérification de Textes et Emails (NLP)
 
-Ce module analyse les messages textuels (emails, WhatsApp, etc.) liés aux demandes de crédit afin d'en extraire les informations clés et de comprendre le contexte.
+Ce module analyse les messages textuels (emails, WhatsApp, etc.) liés aux demandes de crédit afin d’en extraire les informations clés et de comprendre le contexte.
 
 Fonctionnalités :
 
 * Nettoyage avancé des messages (suppression du bruit, signatures, HTML).
-* Analyse sémantique pour comprendre l'intention du client.
-* Extraction d'entités :
+* Analyse sémantique pour comprendre l’intention du client.
+* Extraction d’entités :
 
   * montants financiers,
   * noms,
@@ -166,7 +166,7 @@ Fonctionnalités :
   * `models.py` : modèles Pydantic
 * `scripts/` :
 
-  * `process_messages.py` : moteur d'analyse NLP
+  * `process_messages.py` : moteur d’analyse NLP
   * `gmail_fetch.py`, `whatsapp_fetch.py`, `bank_fetch.py`
   * utilitaires de logging et de vérification MongoDB
 
@@ -198,7 +198,7 @@ WHATSAPP_VERIFY_TOKEN=your_token
 
 #### Utilisation
 
-Lancer l'API :
+Lancer l’API :
 
 ```bash
 uvicorn app.main:app --reload
@@ -214,7 +214,7 @@ python scripts/process_messages.py
 
 ### 5. Module Audio (Analyse Comportementale)
 
-Ce module traite et analyse les messages vocaux (notamment WhatsApp) afin d'extraire des indicateurs comportementaux utiles à l'analyse du risque.
+Ce module traite et analyse les messages vocaux (notamment WhatsApp) afin d’extraire des indicateurs comportementaux utiles à l’analyse du risque.
 
 Fonctionnalités :
 
@@ -298,6 +298,8 @@ Note : Tesseract OCR et Qdrant doivent être installés et configurés au préal
 
 ---
 
-Projet réalisé dans le cadre du développement d'une plateforme intelligente d'aide à la décision pour l'analyse de prêts, la détection de fraude et l'analyse comportementale multi-canale.
+Projet réalisé dans le cadre du développement d’une plateforme intelligente d’aide à la décision pour l’analyse de prêts, la détection de fraude et l’analyse comportementale multi-canale.
 
 ---
+
+

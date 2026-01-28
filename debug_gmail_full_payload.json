@@ -1,0 +1,210 @@
+{
+  "id": "19c020bb85566a6b",
+  "threadId": "19c020bb85566a6b",
+  "labelIds": [
+    "IMPORTANT",
+    "CATEGORY_PERSONAL",
+    "INBOX"
+  ],
+  "snippet": "Bonjour, Je ma appelle youssef truki j ai 18 ans je ceut un credit de 1000dt .",
+  "payload": {
+    "partId": "",
+    "mimeType": "multipart/mixed",
+    "filename": "",
+    "headers": [
+      {
+        "name": "Delivered-To",
+        "value": "youssef.turki@ept.ucar.tn"
+      },
+      {
+        "name": "Received",
+        "value": "by 2002:a05:6674:6a0a:b0:6a7:cdb5:7f27 with SMTP id wy10csp1668512pxc;        Tue, 27 Jan 2026 16:40:49 -0800 (PST)"
+      },
+      {
+        "name": "X-Received",
+        "value": "by 2002:a05:7300:d512:b0:2ae:5b54:523e with SMTP id 5a478bee46e88-2b78da41b9dmr2144518eec.40.1769560848637;        Tue, 27 Jan 2026 16:40:48 -0800 (PST)"
+      },
+      {
+        "name": "ARC-Seal",
+        "value": "i=2; a=rsa-sha256; t=1769560848; cv=pass;        d=google.com; s=arc-20240605;        b=dKo5rKPxfYbSjI8nunzA38YOiRzspMThoBeKg9l5dNklDsfjXbziGRsQdHoj53pPts         IherKL6xWDdu6sXQWG2MxJeQf1GASiBfUwzOaHBhKHReVnxda73Tu9SoUk1V9pKkO4UN         DuNa+HFj0fOCHsJlMYqDa3rZlLSPRCRcZjpeX+LjAuPJUaTlTGTbHewJza2eDJfXq6bF         7WI8KzzpCrJRnydWZlnrUJcMego8rKmAv+9HM4kBSwucrtitd+hbKGR7UA2ImeQmXvg1         PjGETK92CgrO6UbONUhrpHpNPW0BrUBe4/l2ZNzmT8RoPwsCT1Pnw5bpzKh2LNPRxx9M         L/GA=="
+      },
+      {
+        "name": "ARC-Message-Signature",
+        "value": "i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;        h=to:subject:message-id:date:from:mime-version:dkim-signature;        bh=/+BzYQf8jnL60g8P4VpILn7khUDwxVh8fD3K3hkqIgU=;        fh=xLTCrUeZwAGrttH12tD03FNXjXpLgH5enXPMwZhPLF0=;        b=dDocHl8mFuc2eaMqbJ5NNstY8aF/r90s8kRWqV6+UHpKwvcV7LeXAGzbjueV+ciybU         3KfjdCNwWUw22a0atqIC8v9CwJXrK5IpyPH3nJHgVOHM5kCr9zeIanDf9dSTd3e2puye         5mj7Z+m23IQC6zcN/WRwGQwNEpmsU87D5oTUtlD9kFCbXKiQq7IeGMuC1KEYlb0SRnPR         ZWhMImB68JIuJKaL/yOhNV6a57EL48p5WY/fw9b4D+NxU9UA5kTyCk5Wl3RvtMlgND55         AXPjfmUXmmxZtsJKrjoR0sMKAyRDbJTTbnrMcU957qE0yHt/tDLXYUkc9lXkNEaEHE8m         XfuA==;        dara=google.com"
+      },
+      {
+        "name": "ARC-Authentication-Results",
+        "value": "i=2; mx.google.com;       dkim=pass header.i=@gmail.com header.s=20230601 header.b=ENC8bxcc;       arc=pass (i=1);       spf=pass (google.com: domain of youssefturki999@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=youssefturki999@gmail.com;       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;       dara=fail header.i=@ept.ucar.tn"
+      },
+      {
+        "name": "Return-Path",
+        "value": "<youssefturki999@gmail.com>"
+      },
+      {
+        "name": "Received",
+        "value": "from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])        by mx.google.com with SMTPS id 5a478bee46e88-2b79c3c4a00sor395961eec.11.2026.01.27.16.40.48        for <youssef.turki@ept.ucar.tn>        (Google Transport Security);        Tue, 27 Jan 2026 16:40:48 -0800 (PST)"
+      },
+      {
+        "name": "Received-SPF",
+        "value": "pass (google.com: domain of youssefturki999@gmail.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;"
+      },
+      {
+        "name": "Authentication-Results",
+        "value": "mx.google.com;       dkim=pass header.i=@gmail.com header.s=20230601 header.b=ENC8bxcc;       arc=pass (i=1);       spf=pass (google.com: domain of youssefturki999@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=youssefturki999@gmail.com;       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;       dara=fail header.i=@ept.ucar.tn"
+      },
+      {
+        "name": "ARC-Seal",
+        "value": "i=1; a=rsa-sha256; t=1769560848; cv=none;        d=google.com; s=arc-20240605;        b=QzWlCWs0KGwZaPQRlZ7nx7aeN7O6XDuYfJWaR2LV7uTKb56zKDq+i+MVymGDaA3Dia         oxkCDvkzg82xVt6IsDGWF7S7PKQdukXDZ7yAQQPEsJPyxp01fS8ewggAYoiW9v22ZZIM         Rrmz/zMBcIx1Q4qgTAC32I2KDa0RtzW9LDLrTP39ViiIqNcPdes/JhaRGsjbgEGLRZt8         zkWsS2IKhxLRdD8zvCCOMOXblcmnYMSbAMISwnRhOu99/Sm6svMC3YwS1e2tejyean3s         9GO+hrexhT0liM4ZM2LdBkwnzQe9hev7bH1qgQuKt7cSjWj0oYTm12x1T/FyTRTU6jIn         JJbg=="
+      },
+      {
+        "name": "ARC-Message-Signature",
+        "value": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;        h=to:subject:message-id:date:from:mime-version:dkim-signature;        bh=/+BzYQf8jnL60g8P4VpILn7khUDwxVh8fD3K3hkqIgU=;        fh=xLTCrUeZwAGrttH12tD03FNXjXpLgH5enXPMwZhPLF0=;        b=BtCQMVTCuDAkxVPf+Nqjv46LZQuIUg7xu2F4jM75VPvHmcqleRSUEQLcYJa2KRD9TY         SQmj9p9UpM6rrjvwgthidXvMjcwgdTif2wjmzPzDk9wnaRkCPjenegfJ7LhsGrN/fUwL         mibBRoXUPcPnK5cwPly7juft9Qb0DgeJDu+geVtzF8z+91lwWobvIvGCN+dk98FOIXWP         GcyJJshsAxksf8kBhku9MvG9VtQMUZib6HCUPKHWu5B+1/0gDK+3QQnuHAIN759BuE0q         lTDEdIUNlh673sHdMDzvBYtp3pR9G8yOInHzVgWhueXl+loMBtHgAmSba1zRSjZoafu8         BvIg==;        darn=ept.ucar.tn"
+      },
+      {
+        "name": "ARC-Authentication-Results",
+        "value": "i=1; mx.google.com; arc=none"
+      },
+      {
+        "name": "DKIM-Signature",
+        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=gmail.com; s=20230601; t=1769560848; x=1770165648; darn=ept.ucar.tn;        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject         :date:message-id:reply-to;        bh=/+BzYQf8jnL60g8P4VpILn7khUDwxVh8fD3K3hkqIgU=;        b=ENC8bxccwC9vydR0MrfwFBq6LdsxhP1hs+csgLXjvE45sphpI0oHgUitjkhdvwP72e         Om4NUzQyvJ1b3uyWdcuyiVaIi6FRfGmtXIt4ul6tTjC3tRe+JViWuyUMMY5rL0wPbcJj         FBa3YvKKZx7aEmqg/ezSuJ0kHjg/lDTmwMn2pfVXYXRkE7vLkf2Z1324F7UdT0LUvY2T         W4R0YDnK4Qp5d7DTshLwDB66BpskFqqsjLR5t/9i1txcFqLmB57+HM6oFHTzxJPmjRcZ         DWStRtHOOzcFuXNqo6OUKnsq7WpxzLECsMVPIry8x4FmCS3NxCq+ggNJ4XMt5DDj+1w5         O7mg=="
+      },
+      {
+        "name": "X-Google-DKIM-Signature",
+        "value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=1e100.net; s=20230601; t=1769560848; x=1770165648;        h=to:subject:message-id:date:from:mime-version:x-gm-gg         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;        bh=/+BzYQf8jnL60g8P4VpILn7khUDwxVh8fD3K3hkqIgU=;        b=QPyh6glHmmbvIv8N6aR2nsOtahH4Fg9m7cLLH7NIkEYlU2L3l0aXM4gKwLJppXI6jk         wThAgp49SAGEuIFV7kvUu3Bir9vOcYHAO9DmVEt+6poqPXFdoRAFNST9G4FWZQ7RWGPi         eeQv/VcTweKjbvC+gn9SYBCPm3YOAh9wbtemhoXenc90mTv05kb5NIbboVfTtr9L8KZa         PbpGDf+s3iLEZeF1QxI5uNevFVWGIX660H/JjNPfXKHl/OztMXhdTF67fGcysXfb4Sk/         PNHHy8AmOM2nEQZZuscshyLEjQm2Y83fppZ/+Ge1xRJacgAOsvECwKwoGBRXvaoTyWjW         Ugew=="
+      },
+      {
+        "name": "X-Gm-Message-State",
+        "value": "AOJu0YzvjuPcWjlp/LRthNqZ9VYcke7V+ILsbcYPbufRJEqGVFO2p7tw ALrifpKK7S8MjMn14V2xeVX5ieK9cUuYdJuLA82fPiEGLEk226qEQl2o0MB681skh4F5XGVSkqO uL/OA9Zk3b845SCNHkAqoJTchH862gODX+X5hJ2U="
+      },
+      {
+        "name": "X-Gm-Gg",
+        "value": "AZuq6aLul1XKkOn0Cvs4wXyv2/8QPLi0aIapg8DRFbnfxwpO3pERD6m3hDji90RGpcR fuWkukT8Ep88RHt/KfjxWk7s9STvexbL0JK9HI7Bo/N+TkvyvYWas+ejhljCUvxSNkW3ySx5gNQ XlsoZRQFsW8lIzxG3khWRY+cWjkrbYtT4KfqUxuSd2lxxhfIjRtgH/8XjRDn+pEePg+FTqxqwdu Q9usFniirzi3tlsm39Yph6DDCxfGhBkECxWBanHqt/tHQyCBxrjSxCGDviENrHqyNjU7yWBEA=="
+      },
+      {
+        "name": "X-Received",
+        "value": "by 2002:a05:7300:a985:b0:2ae:6024:870e with SMTP id 5a478bee46e88-2b78d8d40a4mr1920766eec.8.1769560845958; Tue, 27 Jan 2026 16:40:45 -0800 (PST)"
+      },
+      {
+        "name": "MIME-Version",
+        "value": "1.0"
+      },
+      {
+        "name": "From",
+        "value": "Youssef Turki <youssefturki999@gmail.com>"
+      },
+      {
+        "name": "Date",
+        "value": "Wed, 28 Jan 2026 01:40:34 +0100"
+      },
+      {
+        "name": "X-Gm-Features",
+        "value": "AZwV_QjmlFo-biJJlB4Err5rg6hUjp9DlsuCNnum-WAB8Izmu48LwU5C8vqDXQU"
+      },
+      {
+        "name": "Message-ID",
+        "value": "<CAD2-A6Q2947hP0yg9YUC-eeQ9wBUTchzALkUdG3qG3XGTAATYQ@mail.gmail.com>"
+      },
+      {
+        "name": "Subject",
+        "value": "Credit"
+      },
+      {
+        "name": "To",
+        "value": "youssef.turki@ept.ucar.tn"
+      },
+      {
+        "name": "Content-Type",
+        "value": "multipart/mixed; boundary=\"000000000000a2893b064967fd14\""
+      }
+    ],
+    "body": {
+      "size": 0
+    },
+    "parts": [
+      {
+        "partId": "0",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "multipart/alternative; boundary=\"000000000000a2893a064967fd12\""
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0.0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 81,
+              "data": "Qm9uam91ciwNCkplIG1hIGFwcGVsbGUgeW91c3NlZiB0cnVraSBqIGFpIDE4IGFucyBqZSBjZXV0IHVuIGNyZWRpdCBkZSAxMDAwZHQgLg0K"
+            }
+          },
+          {
+            "partId": "0.1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              },
+              {
+                "name": "Content-Transfer-Encoding",
+                "value": "quoted-printable"
+              }
+            ],
+            "body": {
+              "size": 685,
+              "data": "PGRpdiBzdHlsZT0iZm9udC1zaXplOmluaGVyaXQiPjxzcGFuIHN0eWxlPSJjb2xvcjpyZ2IoNDksNDksNDkpO2ZvbnQtZmFtaWx5Oi1hcHBsZS1zeXN0ZW0sc2Fucy1zZXJpZjtmb250LXNpemU6aW5oZXJpdDtmb250LXN0eWxlOm5vcm1hbDtmb250LXdlaWdodDo0MDA7bGV0dGVyLXNwYWNpbmc6bm9ybWFsO3RleHQtaW5kZW50OjBweDt0ZXh0LXRyYW5zZm9ybTpub25lO3doaXRlLXNwYWNlOm5vcm1hbDt3b3JkLXNwYWNpbmc6MXB4O3RleHQtZGVjb3JhdGlvbjpub25lO2Zsb2F0Om5vbmU7ZGlzcGxheTppbmxpbmUhaW1wb3J0YW50Ij5Cb25qb3VyLMKgPC9zcGFuPjxkaXYgZGlyPSJhdXRvIiBzdHlsZT0iY29sb3I6cmdiKDQ5LDQ5LDQ5KTtmb250LWZhbWlseTotYXBwbGUtc3lzdGVtLHNhbnMtc2VyaWY7Zm9udC1zaXplOmluaGVyaXQ7Zm9udC1zdHlsZTpub3JtYWw7Zm9udC13ZWlnaHQ6NDAwO2xldHRlci1zcGFjaW5nOm5vcm1hbDt0ZXh0LWluZGVudDowcHg7dGV4dC10cmFuc2Zvcm06bm9uZTt3aGl0ZS1zcGFjZTpub3JtYWw7d29yZC1zcGFjaW5nOjFweDt0ZXh0LWRlY29yYXRpb246bm9uZSI-SmUgbWEgYXBwZWxsZSB5b3Vzc2VmIHRydWtpIGogYWkgMTggYW5zIGplIGNldXQgdW4gY3JlZGl0IGRlIDEwMDBkdCAuwqA8L2Rpdj48YnIgc3R5bGU9ImZvbnQtc2l6ZTppbmhlcml0Ij48L2Rpdj4NCg=="
+            }
+          }
+        ]
+      },
+      {
+        "partId": "1",
+        "mimeType": "image/jpeg",
+        "filename": "5.jpg",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "value": "image/jpeg; name=\"5.jpg\""
+          },
+          {
+            "name": "Content-Disposition",
+            "value": "attachment; filename=\"5.jpg\""
+          },
+          {
+            "name": "Content-Transfer-Encoding",
+            "value": "base64"
+          },
+          {
+            "name": "Content-ID",
+            "value": "<19c020b69c533e51c91>"
+          },
+          {
+            "name": "X-Attachment-Id",
+            "value": "19c020b69c533e51c91"
+          }
+        ],
+        "body": {
+          "attachmentId": "ANGjdJ9tM3Z6yiQLQtca961z1_sl9G21njzY4vE5LcGBb7VCO3kVwIGkwOnpSykaScSAvpe_Ze4RwI-sX06QM0hhhAWvdFR3iSd_KXQOzbEHd_go6TO4AzHAoEY09mLbGG6Y27RciA8dAJi4WJcpMbyqmw4ciu6EO7jkYzaUff8LKKwsq_-UpHlSYGVfHMwYqvKv3fQ7YbgzKp-giSYMEhPV0ogVXqPIybTIMYv8jo348XoPJEFRnmEmjlz4c70YkiHpGADQ3G1UZwpVnfz38DbMlKf_dS3tge2B0-5ZuOF0igBVpMwVqwI8cesoK2r_nrdHeLLjpDexCKhLWTtP3qSeR9zjBagUpOyvFnHIM5XTuD3y9KdNLboKKOXyrdlX_vSqLDrKcjjWW8KN0gmB",
+          "size": 2968767
+        }
+      }
+    ]
+  },
+  "sizeEstimate": 4070615,
+  "historyId": "102049",
+  "internalDate": "1769560834000"
+}
