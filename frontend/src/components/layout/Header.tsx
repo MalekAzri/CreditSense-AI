@@ -5,18 +5,17 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, Settings, LogOut, Bell, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
+import { useAuth } from "../providers/AuthProvider";
 
 // We will use a mock logout function passed from props or context later
 export function Header({ isAuthenticated, onLogout }: { isAuthenticated: boolean; onLogout: () => void }) {
     const pathname = usePathname();
+    const { user } = useAuth();
 
     if (!isAuthenticated) return null;
 
     const navItems = [
         { name: "Dashboard", href: "/", icon: LayoutDashboard },
-        // Merged Integrations into Settings as requested, or keep separate?
-        // User asked "via the header... access section to integrate apis" and "configure email".
-        // "Settings" usually implies both. The user accepted merging them.
         { name: "Settings & Integrations", href: "/settings", icon: Settings },
     ];
 
@@ -62,10 +61,15 @@ export function Header({ isAuthenticated, onLogout }: { isAuthenticated: boolean
                 <div className="h-8 w-[1px] bg-white/10" />
                 <div className="flex items-center gap-3">
                     <div className="text-right hidden sm:block">
-                        <p className="text-sm font-medium text-white">Sarah Connor</p>
-                        <p className="text-xs text-slate-500">Senior Risk Analyst</p>
+                        <p className="text-sm font-medium text-white">{user?.name || "Financial Analyst"}</p>
+                        <p className="text-xs text-slate-500 capitalize">{user?.role || "Risk Analyst"}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 border-2 border-white/10" />
+                    <div className="relative">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 border-2 border-white/10 flex items-center justify-center text-[10px] font-bold text-white uppercase shadow-lg shadow-indigo-500/20">
+                            {user?.name?.split(" ").map((n: string) => n[0]).join("") || "AI"}
+                        </div>
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-[#0B0E14] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                    </div>
                 </div>
                 <Button variant="ghost" size="sm" onClick={onLogout} className="text-red-400 hover:bg-red-500/10">
                     <LogOut className="w-5 h-5" />
