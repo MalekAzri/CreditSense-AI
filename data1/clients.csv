@@ -1,0 +1,6 @@
+email,nom,num_dossier,etat_credit,type_client,cin_passeport,demande_credit,bulletin_bancaire,releves_bancaires,bilan,facture_domicile,registre_commerce,matricule_fiscal,compte_resultat,demande_credit_pme,cin_dirigeant
+jean.dupont@email.com,Jean Dupont,CS-001,En attente de documents,Individuel,OK,OK,OK,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
+marie.curie@email.com,Marie Curie,CS-002,Approuvé,Individuel,OK,OK,OK,OK,OK,OK,N/A,N/A,N/A,N/A,N/A
+p.legrand@email.com,Philippe Legrand,CS-003,En cours d'analyse,Individuel,OK,OK,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
+acme.corp@email.com,Acme Corp,PME-001,En attente,PME,N/A,N/A,N/A,OK,OK,N/A,OK,N/A,N/A,OK,OK
+tech.solutions@email.com,Tech Solutions,PME-002,Approuvé,PME,N/A,N/A,N/A,OK,OK,N/A,OK,OK,OK,OK,OK

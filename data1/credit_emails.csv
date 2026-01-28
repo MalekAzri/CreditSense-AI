@@ -1,0 +1,701 @@
+text,label
+Je n'ai pas de nouvelles de ma demande de crédit.,status_request
+je voudrais savoir si j'ai tout envoyé.,document_request
+Pouvez-vous m'indiquer les documents à joindre ?,document_request
+Pourquoi mon dossier n'avance pas ,status_request
+statut de ma demande de prêt s'il vous plaît.,status_request
+C'est quoi la liste des docs ?,document_request
+Je veux parler à un responsable.,other
+"bonjour, comment allez-vous ?",other
+j'attends une réponse depuis longtemps.,status_request
+quels sont les documents nécessaires pour un crédit ?,document_request
+quels sont les docs nécessaires ?,document_request
+j'attends une réponse depuis longtemps.,status_request
+Dites-moi ce qu'il faut envoyer.,document_request
+Réponse pour mon crédit ?,status_request
+statut dossier cs-001,status_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+j'aimerais savoir quels documents préparer pour ma demande.,document_request
+Quel est le statut de ma demande de crédit ?,status_request
+quels papiers pour un prêt ?,document_request
+est-ce que mon dossier a été validé ,status_request
+le statut de ma demande ?,status_request
+merci beaucoup.,other
+Statut dossier CS-001,status_request
+quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+suivi de prêt immo.,status_request
+Quand aurai-je une réponse pour mon prêt ?,status_request
+réponse pour mon crédit ,status_request
+est-ce que c'est accepté ?,status_request
+"Bonjour, des nouvelles de mon crédit ?",status_request
+Suivre mon dossier de prêt,status_request
+pouvez-vous m'aider avec mon application mobile ?,other
+Quels sont les docs nécessaires ,document_request
+Avancement du dossier de financement.,status_request
+qu'est-ce qu'il faut comme papiers pour demander un crédit ?,document_request
+Avancement du dossier de financement.,status_request
+Est-ce que mon prêt est en cours ,status_request
+j'ai un problème avec ma carte bleue.,other
+Comment changer mon mot de passe ?,other
+je voudrais prendre rendez-vous avec un conseiller.,other
+documents recommandés pour un crédit immobilier ,document_request
+réponse pour mon crédit ?,status_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+J'attends une réponse depuis longtemps.,status_request
+est-ce que mon dossier a été validé ?,status_request
+Suivi de prêt immo.,status_request
+Où se trouve votre agence ?,other
+Je voudrais parler à quelqu'un.,other
+Ma demande a-t-elle été examinée ,status_request
+Quand aurai-je une réponse pour mon prêt ?,status_request
+Je souhaite clôturer mon compte.,other
+suivi de dossier de crédit,status_request
+papiers nécessaires dossier bancaire.,document_request
+Ma demande de crédit est-elle en cours de traitement ,status_request
+statut de ma demande de prêt s'il vous plaît.,status_request
+Merci pour votre aide.,other
+documents recommandés pour un crédit immobilier ?,document_request
+que faut-il fournir pour une demande de financement ?,document_request
+C'est quoi la liste des docs ?,document_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+documents recommandés pour un crédit immobilier ?,document_request
+Quel est le statut de ma demande de crédit ?,status_request
+Quels sont les éléments à fournir pour l'étude de mon dossier ?,document_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+où en sommes-nous pour ma demande ?,status_request
+Quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+c'est quoi la liste des docs ?,document_request
+Pouvez-vous m'aider avec mon application mobile ?,other
+Ma demande de crédit est-elle en cours de traitement ?,status_request
+j'attends une réponse depuis longtemps.,status_request
+Merci beaucoup.,other
+suivi de dossier de crédit,status_request
+"bonjour, comment allez-vous ?",other
+je voudrais prendre rendez-vous avec un conseiller.,other
+suivre mon dossier de prêt,status_request
+quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+est-ce que mon dossier a été validé ?,status_request
+pouvez-vous m'indiquer les documents à joindre ?,document_request
+pièces justificatives pour un crédit à la consommation ?,document_request
+Mon dossier est-il complet ,document_request
+est-ce que mon prêt est en cours ?,status_request
+Suivi de prêt immo.,status_request
+Avancement du dossier de financement.,status_request
+liste des pièces à fournir pour un prêt bancaire ?,document_request
+réponse pour mon crédit ?,status_request
+Réponse pour mon crédit ?,status_request
+ma demande a-t-elle été examinée ?,status_request
+avancement du dossier de financement.,status_request
+des nouvelles de mon dossier ?,status_request
+quels sont les justificatifs de revenus ,document_request
+Quelle heure est-il ?,other
+je voudrais prendre rendez-vous avec un conseiller.,other
+Quand aurai-je une réponse pour mon prêt ?,status_request
+Quels documents pour un rachat de crédit ?,document_request
+Délai pour une réponse ?,status_request
+Est-ce qu'il manque des documents ?,document_request
+Liste des pièces à fournir pour un prêt bancaire ?,document_request
+j'aimerais savoir quels documents préparer pour ma demande.,document_request
+Papiers nécessaires dossier bancaire.,document_request
+ma demande de crédit est-elle en cours de traitement ,status_request
+où en est mon dossier de prêt ?,status_request
+Pouvez-vous me dire si mon crédit est accepté ,status_request
+J'ai un problème avec ma carte bleue.,other
+où en sommes-nous pour ma demande ,status_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+je n'ai pas eu de retour sur ma demande.,status_request
+pouvez-vous me dire si mon crédit est accepté ?,status_request
+Ma demande a-t-elle été examinée ?,status_request
+quelle heure est-il ?,other
+quel est le statut de ma demande de crédit ?,status_request
+Quels sont les docs nécessaires ?,document_request
+quels sont les justificatifs de revenus ?,document_request
+pouvez-vous m'envoyer la liste des documents pour un prêt ?,document_request
+Liste des pièces à fournir pour un prêt bancaire ?,document_request
+Statut dossier CS-001,status_request
+J'ai besoin de la liste des pièces justificatives.,document_request
+quels documents pour prouver mon identité ?,document_request
+Merci pour votre aide.,other
+faut-il un avis d'imposition ?,document_request
+Quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+ma demande est-elle validée ?,status_request
+Pouvez-vous m'indiquer les documents à joindre ?,document_request
+Ma demande de crédit est-elle en cours de traitement ?,status_request
+des nouvelles de mon dossier ?,status_request
+je veux parler à un responsable.,other
+est-ce qu'il manque des documents ?,document_request
+Je voudrais savoir si j'ai tout envoyé.,document_request
+liste documents manquants svp.,document_request
+je voudrais savoir si ma demande avance.,status_request
+le statut de ma demande ,status_request
+Je n'ai pas de nouvelles de ma demande de crédit.,status_request
+j'ai un problème avec ma carte bleue.,other
+c'est quoi la liste des docs ?,document_request
+Le statut de ma demande ?,status_request
+Quels sont les justificatifs de revenus ?,document_request
+Liste des pièces à fournir pour un prêt bancaire ?,document_request
+Je voudrais savoir si j'ai tout envoyé.,document_request
+Papiers nécessaires dossier bancaire.,document_request
+Où en sommes-nous pour ma demande ?,status_request
+Pourquoi mon dossier n'avance pas ?,status_request
+je n'ai pas de nouvelles de ma demande de crédit.,status_request
+dites-moi ce qu'il faut envoyer.,document_request
+il manque quoi pour valider mon crédit ?,document_request
+avancement de ma demande de financement,status_request
+avancement du dossier de financement.,status_request
+quels documents pour prouver mon identité ?,document_request
+statut de ma demande de prêt s'il vous plaît.,status_request
+Mon dossier est-il complet ?,document_request
+J'attends une réponse depuis longtemps.,status_request
+je souhaite clôturer mon compte.,other
+suivi de prêt immo.,status_request
+Pouvez-vous m'indiquer les documents à joindre ?,document_request
+Est-ce qu'il manque des documents ,document_request
+où en est mon dossier de prêt ?,status_request
+Quels sont les éléments manquants pour mon prêt ?,document_request
+avancement de ma demande de financement,status_request
+suivi de prêt immo.,status_request
+où se trouve votre agence ?,other
+Réponse pour mon crédit ?,status_request
+Est-ce que c'est accepté ?,status_request
+Suivre mon dossier de prêt,status_request
+Quelles sont les pièces manquantes ?,document_request
+Où en est mon dossier de prêt ,status_request
+"bonjour, des nouvelles de mon crédit ?",status_request
+pouvez-vous m'aider avec mon application mobile ?,other
+liste documents manquants svp.,document_request
+vérifiez si mon dossier est complet.,document_request
+merci pour votre aide.,other
+comment changer mon mot de passe ?,other
+pourquoi mon dossier n'avance pas ?,status_request
+ma demande est-elle validée ,status_request
+qu'est-ce qu'il faut comme papiers pour demander un crédit ,document_request
+suivi de prêt immo.,status_request
+Est-ce que c'est accepté ?,status_request
+pouvez-vous m'envoyer la liste des documents pour un prêt ?,document_request
+Vérifiez si mon dossier est complet.,document_request
+Quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+statut de ma demande de prêt s'il vous plaît.,status_request
+Que manque-t-il dans mon dossier ,document_request
+Quels papiers pour un prêt ?,document_request
+documents recommandés pour un crédit immobilier ?,document_request
+Aurevoir.,other
+Quelle heure est-il ?,other
+Que faut-il fournir pour une demande de financement ?,document_request
+Ma demande a-t-elle été examinée ,status_request
+je n'ai pas de nouvelles de ma demande de crédit.,status_request
+"C'est urgent, rappelez-moi.",other
+documents recommandés pour un crédit immobilier ?,document_request
+ma demande a-t-elle été examinée ?,status_request
+Suivi de prêt immo.,status_request
+Je n'ai pas de nouvelles de ma demande de crédit.,status_request
+pouvez-vous me dire si mon crédit est accepté ?,status_request
+Merci pour votre aide.,other
+suivi de dossier de crédit,status_request
+Quand aurai-je une réponse pour mon prêt ?,status_request
+liste documents crédit bancaire,document_request
+Quels papiers dois-je envoyer ,document_request
+j'ai besoin de la liste des pièces justificatives.,document_request
+Quelles sont les pièces manquantes ?,document_request
+suivi de dossier de crédit,status_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+Statut dossier CS-001,status_request
+Comment activer mon compte ?,other
+Où se trouve votre agence ?,other
+Suivi de dossier de crédit,status_request
+Pièces justificatives pour un crédit à la consommation ,document_request
+Quels documents pour prouver mon identité ,document_request
+Aurevoir.,other
+Quels documents pour un rachat de crédit ?,document_request
+Je voudrais parler à quelqu'un.,other
+liste documents manquants svp.,document_request
+Suivi de dossier de crédit,status_request
+pouvez-vous m'indiquer les documents à joindre ?,document_request
+Avancement de ma demande de financement,status_request
+j'attends une réponse depuis longtemps.,status_request
+avancement de ma demande de financement,status_request
+Quels sont les documents nécessaires pour un crédit ,document_request
+Quels sont les documents nécessaires pour un crédit ?,document_request
+quels documents pour prouver mon identité ,document_request
+"bonjour, des nouvelles de mon crédit ?",status_request
+papiers nécessaires dossier bancaire.,document_request
+Comment activer mon compte ,other
+mon dossier est-il complet ?,document_request
+Quels papiers dois-je envoyer ?,document_request
+Quels sont les docs nécessaires ?,document_request
+suivi de prêt immo.,status_request
+je n'ai pas eu de retour sur ma demande.,status_request
+comment changer mon mot de passe ?,other
+ma demande est-elle validée ,status_request
+Quels documents pour prouver mon identité ?,document_request
+Que faut-il fournir pour une demande de financement ,document_request
+Ma demande de crédit est-elle en cours de traitement ?,status_request
+Quels sont vos horaires d'ouverture ?,other
+quels sont les documents nécessaires pour un crédit ?,document_request
+Quels sont les éléments à fournir pour l'étude de mon dossier ,document_request
+pouvez-vous m'indiquer les documents à joindre ?,document_request
+Je voudrais savoir si j'ai tout envoyé.,document_request
+Merci pour votre aide.,other
+j'attends une réponse depuis longtemps.,status_request
+il manque quoi pour valider mon crédit ?,document_request
+Avancement du dossier de financement.,status_request
+que manque-t-il dans mon dossier ?,document_request
+Que faut-il fournir pour une demande de financement ,document_request
+quels sont vos horaires d'ouverture ?,other
+Quels sont les éléments à fournir pour l'étude de mon dossier ?,document_request
+Ma demande a-t-elle été examinée ,status_request
+quels documents pour prouver mon identité ,document_request
+Est-ce qu'il manque des documents ?,document_request
+réponse pour mon crédit ?,status_request
+Vérifiez si mon dossier est complet.,document_request
+quelles sont les pièces manquantes ?,document_request
+Quels sont les éléments à fournir pour l'étude de mon dossier ?,document_request
+Quelle heure est-il ,other
+Avancement du dossier de financement.,status_request
+"Bonjour, comment allez-vous ?",other
+Que faut-il fournir pour une demande de financement ?,document_request
+Où en sommes-nous pour ma demande ,status_request
+J'attends une réponse depuis longtemps.,status_request
+Liste des pièces à fournir pour un prêt bancaire ?,document_request
+avancement de ma demande de financement,status_request
+je voudrais parler à quelqu'un.,other
+quelles sont les pièces manquantes ?,document_request
+Je n'ai pas de nouvelles de ma demande de crédit.,status_request
+quels papiers dois-je envoyer ?,document_request
+est-ce que c'est accepté ?,status_request
+pourquoi mon dossier n'avance pas ?,status_request
+statut dossier cs-001,status_request
+pouvez-vous m'aider avec mon application mobile ?,other
+Suivi de dossier de crédit,status_request
+Je voudrais savoir si ma demande avance.,status_request
+Pouvez-vous m'envoyer la liste des documents pour un prêt ,document_request
+Statut de ma demande de prêt s'il vous plaît.,status_request
+"bonjour, comment allez-vous ?",other
+avancement du dossier de financement.,status_request
+pourquoi mon dossier n'avance pas ?,status_request
+j'aimerais savoir quels documents préparer pour ma demande.,document_request
+Il manque quoi pour valider mon crédit ?,document_request
+"c'est urgent, rappelez-moi.",other
+pourquoi mon dossier n'avance pas ,status_request
+est-ce que c'est accepté ?,status_request
+faut-il un avis d'imposition ,document_request
+J'ai un problème avec ma carte bleue.,other
+Quels documents pour prouver mon identité ?,document_request
+Dites-moi ce qu'il faut envoyer.,document_request
+Quelles sont les pièces manquantes ,document_request
+Est-ce que mon prêt est en cours ,status_request
+Ma demande a-t-elle été examinée ?,status_request
+Pourquoi mon dossier n'avance pas ,status_request
+documents recommandés pour un crédit immobilier ?,document_request
+Je voudrais savoir si j'ai tout envoyé.,document_request
+Vérifiez si mon dossier est complet.,document_request
+quels sont les justificatifs de revenus ?,document_request
+Merci pour votre aide.,other
+Avancement de ma demande de financement,status_request
+J'ai besoin de la liste des pièces justificatives.,document_request
+quels sont les éléments manquants pour mon prêt ?,document_request
+quels sont vos horaires d'ouverture ?,other
+quelles sont les pièces manquantes ,document_request
+réponse pour mon crédit ?,status_request
+mon dossier est-il complet ?,document_request
+Ma demande de crédit est-elle en cours de traitement ?,status_request
+Des nouvelles de mon dossier ,status_request
+Quelles sont les pièces manquantes ?,document_request
+Des nouvelles de mon dossier ?,status_request
+J'ai besoin de la liste des pièces justificatives.,document_request
+liste documents crédit bancaire,document_request
+ma demande est-elle validée ?,status_request
+Quels sont les éléments manquants pour mon prêt ?,document_request
+Où en sommes-nous pour ma demande ?,status_request
+Qu'est-ce qu'il faut comme papiers pour demander un crédit ?,document_request
+J'ai besoin de la liste des pièces justificatives.,document_request
+quand aurai-je une réponse pour mon prêt ?,status_request
+Statut de ma demande de prêt s'il vous plaît.,status_request
+Est-ce que mon prêt est en cours ?,status_request
+vérifiez si mon dossier est complet.,document_request
+statut de ma demande de prêt s'il vous plaît.,status_request
+J'ai besoin de la liste des pièces justificatives.,document_request
+Statut de ma demande de prêt s'il vous plaît.,status_request
+Quelle heure est-il ,other
+je n'ai pas eu de retour sur ma demande.,status_request
+j'ai un problème avec ma carte bleue.,other
+Vérifiez si mon dossier est complet.,document_request
+ma demande de crédit est-elle en cours de traitement ?,status_request
+Dites-moi ce qu'il faut envoyer.,document_request
+"Bonjour, comment allez-vous ?",other
+Quels sont vos horaires d'ouverture ?,other
+Réponse pour mon crédit ?,status_request
+Pourquoi mon dossier n'avance pas ?,status_request
+Je n'ai pas de nouvelles de ma demande de crédit.,status_request
+je voudrais savoir si ma demande avance.,status_request
+Est-ce que mon dossier a été validé ?,status_request
+Liste documents manquants svp.,document_request
+Quels papiers pour un prêt ,document_request
+quels papiers dois-je envoyer ,document_request
+Quels papiers pour un prêt ?,document_request
+Réponse pour mon crédit ?,status_request
+Quand aurai-je une réponse pour mon prêt ?,status_request
+je voudrais savoir si j'ai tout envoyé.,document_request
+Je voudrais savoir si j'ai tout envoyé.,document_request
+pouvez-vous m'envoyer la liste des documents pour un prêt ?,document_request
+je n'ai pas eu de retour sur ma demande.,status_request
+où en est mon dossier de prêt ?,status_request
+Est-ce que mon dossier a été validé ?,status_request
+je n'ai pas de nouvelles de ma demande de crédit.,status_request
+faut-il un avis d'imposition ?,document_request
+Suivi de dossier de crédit,status_request
+délai pour une réponse ?,status_request
+Ma demande a-t-elle été examinée ,status_request
+le statut de ma demande ?,status_request
+C'est quoi la liste des docs ?,document_request
+Liste des pièces à fournir pour un prêt bancaire ,document_request
+vérifiez si mon dossier est complet.,document_request
+quels documents pour prouver mon identité ?,document_request
+pouvez-vous m'aider avec mon application mobile ?,other
+des nouvelles de mon dossier ?,status_request
+faut-il un avis d'imposition ?,document_request
+Que manque-t-il dans mon dossier ?,document_request
+Pouvez-vous m'aider avec mon application mobile ?,other
+j'attends une réponse depuis longtemps.,status_request
+Quelles sont les pièces manquantes ,document_request
+Vérifiez si mon dossier est complet.,document_request
+quels documents pour un rachat de crédit ?,document_request
+ma demande de crédit est-elle en cours de traitement ?,status_request
+quels sont les justificatifs de revenus ?,document_request
+Est-ce que mon dossier a été validé ?,status_request
+pourquoi mon dossier n'avance pas ?,status_request
+Vérifiez si mon dossier est complet.,document_request
+"Bonjour, des nouvelles de mon crédit ?",status_request
+Quelles sont les pièces manquantes ,document_request
+pourquoi mon dossier n'avance pas ?,status_request
+Faut-il un avis d'imposition ?,document_request
+Suivre mon dossier de prêt,status_request
+"c'est urgent, rappelez-moi.",other
+je voudrais parler à quelqu'un.,other
+pouvez-vous m'envoyer la liste des documents pour un prêt ?,document_request
+aurevoir.,other
+Réponse pour mon crédit ?,status_request
+est-ce qu'il manque des documents ?,document_request
+comment changer mon mot de passe ?,other
+Avancement de ma demande de financement,status_request
+Je voudrais savoir si ma demande avance.,status_request
+quels sont les docs nécessaires ?,document_request
+pouvez-vous me dire si mon crédit est accepté ,status_request
+est-ce que c'est accepté ?,status_request
+Ma demande a-t-elle été examinée ?,status_request
+Quel est le statut de ma demande de crédit ?,status_request
+Suivi de prêt immo.,status_request
+Qu'est-ce qu'il faut comme papiers pour demander un crédit ,document_request
+Vérifiez si mon dossier est complet.,document_request
+quelles sont les pièces manquantes ?,document_request
+pouvez-vous m'aider avec mon application mobile ?,other
+suivi de dossier de crédit,status_request
+quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+que faut-il fournir pour une demande de financement ?,document_request
+mon dossier est-il complet ?,document_request
+je n'ai pas eu de retour sur ma demande.,status_request
+Liste documents manquants svp.,document_request
+je n'ai pas de nouvelles de ma demande de crédit.,status_request
+Quels sont les justificatifs de revenus ?,document_request
+Je voudrais parler à quelqu'un.,other
+C'est quoi la liste des docs ?,document_request
+Avancement du dossier de financement.,status_request
+statut dossier cs-001,status_request
+avancement du dossier de financement.,status_request
+merci pour votre aide.,other
+Que faut-il fournir pour une demande de financement ,document_request
+Est-ce qu'il manque des documents ?,document_request
+quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+Je veux parler à un responsable.,other
+statut de ma demande de prêt s'il vous plaît.,status_request
+je veux parler à un responsable.,other
+Merci pour votre aide.,other
+est-ce que c'est accepté ?,status_request
+J'ai besoin de la liste des pièces justificatives.,document_request
+documents recommandés pour un crédit immobilier ?,document_request
+"bonjour, comment allez-vous ?",other
+J'aimerais savoir quels documents préparer pour ma demande.,document_request
+Liste documents manquants svp.,document_request
+documents recommandés pour un crédit immobilier ?,document_request
+j'ai un problème avec ma carte bleue.,other
+Liste documents crédit bancaire,document_request
+quels papiers dois-je envoyer ?,document_request
+Mon dossier est-il complet ?,document_request
+je souhaite clôturer mon compte.,other
+Qu'est-ce qu'il faut comme papiers pour demander un crédit ,document_request
+Je voudrais savoir si j'ai tout envoyé.,document_request
+quels documents pour prouver mon identité ?,document_request
+Je voudrais prendre rendez-vous avec un conseiller.,other
+pourquoi mon dossier n'avance pas ?,status_request
+"bonjour, comment allez-vous ?",other
+Liste des pièces à fournir pour un prêt bancaire ?,document_request
+Faut-il un avis d'imposition ?,document_request
+Quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+je voudrais parler à quelqu'un.,other
+"bonjour, comment allez-vous ?",other
+Vérifiez si mon dossier est complet.,document_request
+Ma demande de crédit est-elle en cours de traitement ?,status_request
+Le statut de ma demande ?,status_request
+je n'ai pas de nouvelles de ma demande de crédit.,status_request
+des nouvelles de mon dossier ?,status_request
+avancement du dossier de financement.,status_request
+Ma demande de crédit est-elle en cours de traitement ?,status_request
+Documents recommandés pour un crédit immobilier ?,document_request
+Quel est le statut de ma demande de crédit ?,status_request
+Qu'est-ce qu'il faut comme papiers pour demander un crédit ?,document_request
+Est-ce que mon prêt est en cours ?,status_request
+Où en est mon dossier de prêt ?,status_request
+liste documents crédit bancaire,document_request
+Pouvez-vous m'aider avec mon application mobile ?,other
+faut-il un avis d'imposition ?,document_request
+merci pour votre aide.,other
+Quels sont les éléments manquants pour mon prêt ,document_request
+quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+Liste documents crédit bancaire,document_request
+je voudrais savoir si j'ai tout envoyé.,document_request
+Je voudrais savoir si j'ai tout envoyé.,document_request
+délai pour une réponse ,status_request
+où se trouve votre agence ?,other
+Ma demande de crédit est-elle en cours de traitement ?,status_request
+je veux parler à un responsable.,other
+Quel est le statut de ma demande de crédit ?,status_request
+Quels sont les éléments à fournir pour l'étude de mon dossier ?,document_request
+Suivi de dossier de crédit,status_request
+quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+"bonjour, des nouvelles de mon crédit ",status_request
+liste des pièces à fournir pour un prêt bancaire ?,document_request
+pièces justificatives pour un crédit à la consommation ?,document_request
+Quelles sont les pièces manquantes ?,document_request
+pouvez-vous m'indiquer les documents à joindre ?,document_request
+Aurevoir.,other
+Je voudrais savoir si j'ai tout envoyé.,document_request
+Quels sont les docs nécessaires ?,document_request
+quels justificatifs dois-je préparer pour mon dossier de crédit ?,document_request
+Pièces justificatives pour un crédit à la consommation ,document_request
+liste documents manquants svp.,document_request
+Ma demande est-elle validée ?,status_request
+ma demande de crédit est-elle en cours de traitement ?,status_request
+Liste documents manquants svp.,document_request
+Liste documents manquants svp.,document_request
+statut de ma demande de prêt s'il vous plaît.,status_request
+Avancement du dossier de financement.,status_request
+je n'ai pas eu de retour sur ma demande.,status_request
+Quels sont les justificatifs de revenus ?,document_request
+Des nouvelles de mon dossier ?,status_request
+liste des pièces à fournir pour un prêt bancaire ?,document_request
+quels sont les éléments manquants pour mon prêt ?,document_request
+Je voudrais parler à quelqu'un.,other
+Statut de ma demande de prêt s'il vous plaît.,status_request
+Que faut-il fournir pour une demande de financement ?,document_request
+pouvez-vous m'indiquer les documents à joindre ?,document_request
+avancement de ma demande de financement,status_request
+quels sont les justificatifs de revenus ?,document_request
+documents recommandés pour un crédit immobilier ?,document_request
+où se trouve votre agence ?,other
+quelles sont les pièces manquantes ?,document_request
+puis-je avoir un rendez-vous ?,other
+Quels sont les éléments manquants pour mon prêt ?,document_request
+Quels papiers pour un prêt ?,document_request
+suivi de prêt immo.,status_request
+Que manque-t-il dans mon dossier ?,document_request
+Des nouvelles de mon dossier ,status_request
+faut-il un avis d'imposition ?,document_request
+des nouvelles de mon dossier ?,status_request
+documents recommandés pour un crédit immobilier ?,document_request
+je voudrais prendre rendez-vous avec un conseiller.,other
+je veux parler à un responsable.,other
+je voudrais savoir si ma demande avance.,status_request
+quel est le statut de ma demande de crédit ?,status_request
+Merci beaucoup.,other
+papiers nécessaires dossier bancaire.,document_request
+papiers nécessaires dossier bancaire.,document_request
+pouvez-vous me dire si mon crédit est accepté ?,status_request
+suivre mon dossier de prêt,status_request
+Ma demande a-t-elle été examinée ?,status_request
+Statut dossier CS-001,status_request
+pouvez-vous me dire si mon crédit est accepté ?,status_request
+quels documents pour un rachat de crédit ?,document_request
+Réponse pour mon crédit ?,status_request
+Quels sont les éléments à fournir pour l'étude de mon dossier ?,document_request
+je n'ai pas eu de retour sur ma demande.,status_request
+Mon dossier est-il complet ,document_request
+Quels documents pour prouver mon identité ?,document_request
+Quels sont les éléments manquants pour mon prêt ?,document_request
+j'attends une réponse depuis longtemps.,status_request
+papiers nécessaires dossier bancaire.,document_request
+Je voudrais savoir si ma demande avance.,status_request
+Quand aurai-je une réponse pour mon prêt ?,status_request
+Quels sont les éléments manquants pour mon prêt ?,document_request
+où en sommes-nous pour ma demande ?,status_request
+Suivre mon dossier de prêt,status_request
+Des nouvelles de mon dossier ?,status_request
+Suivi de prêt immo.,status_request
+réponse pour mon crédit ?,status_request
+j'attends une réponse depuis longtemps.,status_request
+quand aurai-je une réponse pour mon prêt ?,status_request
+liste des pièces à fournir pour un prêt bancaire ?,document_request
+pourquoi mon dossier n'avance pas ?,status_request
+C'est quoi la liste des docs ?,document_request
+mon dossier est-il complet ?,document_request
+Quels papiers pour un prêt ?,document_request
+liste documents crédit bancaire,document_request
+Merci beaucoup.,other
+Quels papiers pour un prêt ?,document_request
+Quels sont les docs nécessaires ?,document_request
+quand aurai-je une réponse pour mon prêt ?,status_request
+liste des pièces à fournir pour un prêt bancaire ?,document_request
+Je voudrais savoir si ma demande avance.,status_request
+Merci pour votre aide.,other
+qu'est-ce qu'il faut comme papiers pour demander un crédit ?,document_request
+Quels justificatifs dois-je préparer pour mon dossier de crédit ,document_request
+je voudrais savoir si j'ai tout envoyé.,document_request
+Est-ce que mon prêt est en cours ,status_request
+je voudrais savoir si j'ai tout envoyé.,document_request
+Suivi de dossier de crédit,status_request
+Quelle heure est-il ?,other
+vérifiez si mon dossier est complet.,document_request
+Avancement du dossier de financement.,status_request
+Il manque quoi pour valider mon crédit ?,document_request
+Comment activer mon compte ,other
+quels justificatifs dois-je préparer pour mon dossier de crédit ,document_request
+avancement du dossier de financement.,status_request
+Comment activer mon compte ,other
+Quand aurai-je une réponse pour mon prêt ?,status_request
+Pièces justificatives pour un crédit à la consommation ?,document_request
+Ma demande est-elle validée ,status_request
+Quel est le statut de ma demande de crédit ,status_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+Ma demande a-t-elle été examinée ?,status_request
+réponse pour mon crédit ?,status_request
+je souhaite clôturer mon compte.,other
+que manque-t-il dans mon dossier ?,document_request
+j'attends une réponse depuis longtemps.,status_request
+Quels sont les documents nécessaires pour un crédit ?,document_request
+Est-ce que mon dossier a été validé ,status_request
+statut de ma demande de prêt s'il vous plaît.,status_request
+Papiers nécessaires dossier bancaire.,document_request
+Quels papiers pour un prêt ?,document_request
+suivi de prêt immo.,status_request
+Que manque-t-il dans mon dossier ?,document_request
+quels documents pour un rachat de crédit ?,document_request
+Pouvez-vous m'indiquer les documents à joindre ?,document_request
+Que faut-il fournir pour une demande de financement ?,document_request
+"Bonjour, des nouvelles de mon crédit ?",status_request
+J'ai besoin de la liste des pièces justificatives.,document_request
+Statut dossier CS-001,status_request
+réponse pour mon crédit ?,status_request
+Merci beaucoup.,other
+Quels sont les documents nécessaires pour un crédit ?,document_request
+Que manque-t-il dans mon dossier ?,document_request
+Délai pour une réponse ?,status_request
+Liste des pièces à fournir pour un prêt bancaire ,document_request
+Ma demande a-t-elle été examinée ?,status_request
+j'attends une réponse depuis longtemps.,status_request
+quand aurai-je une réponse pour mon prêt ,status_request
+quels sont les justificatifs de revenus ?,document_request
+Pouvez-vous me dire si mon crédit est accepté ,status_request
+liste des pièces à fournir pour un prêt bancaire ?,document_request
+Je n'ai pas de nouvelles de ma demande de crédit.,status_request
+où en sommes-nous pour ma demande ?,status_request
+Quand aurai-je une réponse pour mon prêt ?,status_request
+suivi de prêt immo.,status_request
+est-ce que mon prêt est en cours ?,status_request
+Avancement du dossier de financement.,status_request
+faut-il un avis d'imposition ,document_request
+quand aurai-je une réponse pour mon prêt ?,status_request
+faut-il un avis d'imposition ?,document_request
+Statut de ma demande de prêt s'il vous plaît.,status_request
+Suivi de prêt immo.,status_request
+je voudrais savoir si ma demande avance.,status_request
+Comment changer mon mot de passe ?,other
+des nouvelles de mon dossier ?,status_request
+délai pour une réponse ?,status_request
+Quels sont les éléments à fournir pour l'étude de mon dossier ?,document_request
+quelles sont les pièces manquantes ?,document_request
+Quel est le statut de ma demande de crédit ?,status_request
+je veux parler à un responsable.,other
+Liste documents crédit bancaire,document_request
+Est-ce que mon prêt est en cours ?,status_request
+liste documents manquants svp.,document_request
+Délai pour une réponse ?,status_request
+j'aimerais savoir quels documents préparer pour ma demande.,document_request
+avancement de ma demande de financement,status_request
+suivre mon dossier de prêt,status_request
+ma demande de crédit est-elle en cours de traitement ?,status_request
+Quels sont les éléments manquants pour mon prêt ?,document_request
+je veux parler à un responsable.,other
+est-ce qu'il manque des documents ?,document_request
+documents recommandés pour un crédit immobilier ?,document_request
+faut-il un avis d'imposition ?,document_request
+suivi de prêt immo.,status_request
+Faut-il un avis d'imposition ,document_request
+faut-il un avis d'imposition ?,document_request
+Documents recommandés pour un crédit immobilier ?,document_request
+J'attends une réponse depuis longtemps.,status_request
+Quels sont les éléments manquants pour mon prêt ?,document_request
+je voudrais savoir si j'ai tout envoyé.,document_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+J'aimerais savoir quels documents préparer pour ma demande.,document_request
+Que faut-il fournir pour une demande de financement ?,document_request
+"C'est urgent, rappelez-moi.",other
+pouvez-vous me dire si mon crédit est accepté ,status_request
+Dites-moi ce qu'il faut envoyer.,document_request
+est-ce que mon dossier a été validé ,status_request
+Statut dossier CS-001,status_request
+pouvez-vous me dire si mon crédit est accepté ?,status_request
+quels sont les justificatifs de revenus ?,document_request
+mon dossier est-il complet ?,document_request
+Quels documents pour un rachat de crédit ?,document_request
+je voudrais savoir si j'ai tout envoyé.,document_request
+J'aimerais savoir quels documents préparer pour ma demande.,document_request
+C'est quoi la liste des docs ?,document_request
+Je n'ai pas eu de retour sur ma demande.,status_request
+Quels documents pour un rachat de crédit ,document_request
+Est-ce que mon prêt est en cours ?,status_request
+j'ai besoin de la liste des pièces justificatives.,document_request
+"c'est urgent, rappelez-moi.",other
+Est-ce que mon prêt est en cours ?,status_request
+"Bonjour, des nouvelles de mon crédit ?",status_request
+Aurevoir.,other
+Le statut de ma demande ?,status_request
+Ma demande est-elle validée ?,status_request
+j'attends une réponse depuis longtemps.,status_request
+Avancement du dossier de financement.,status_request
+liste documents manquants svp.,document_request
+Où en est mon dossier de prêt ?,status_request
+Vérifiez si mon dossier est complet.,document_request
+je voudrais prendre rendez-vous avec un conseiller.,other
+Pouvez-vous m'aider avec mon application mobile ?,other
+que manque-t-il dans mon dossier ?,document_request
+aurevoir.,other
+Statut de ma demande de prêt s'il vous plaît.,status_request
+statut de ma demande de prêt s'il vous plaît.,status_request
+pouvez-vous m'indiquer les documents à joindre ?,document_request
+Quels sont les éléments à fournir pour l'étude de mon dossier ,document_request
+est-ce qu'il manque des documents ?,document_request
+Dites-moi ce qu'il faut envoyer.,document_request
+Je voudrais prendre rendez-vous avec un conseiller.,other
+Liste documents manquants svp.,document_request
+"bonjour, des nouvelles de mon crédit ?",status_request
+Pourquoi mon dossier n'avance pas ?,status_request
+Documents recommandés pour un crédit immobilier ?,document_request
+Quelles sont les pièces manquantes ,document_request
+Que manque-t-il dans mon dossier ?,document_request
+liste documents crédit bancaire,document_request
+Est-ce que mon dossier a été validé ?,status_request
+quels sont les justificatifs de revenus ?,document_request
+Quels sont les éléments manquants pour mon prêt ,document_request
+Où en est mon dossier de prêt ,status_request
+où en est mon dossier de prêt ,status_request
+est-ce que c'est accepté ?,status_request
+pouvez-vous m'envoyer la liste des documents pour un prêt ?,document_request
+Où en est mon dossier de prêt ,status_request
+Des nouvelles de mon dossier ?,status_request
+quels sont les justificatifs de revenus ,document_request
+est-ce que c'est accepté ?,status_request
+Liste des pièces à fournir pour un prêt bancaire ?,document_request
+quels documents pour prouver mon identité ?,document_request
+Je voudrais savoir si ma demande avance.,status_request
+liste documents crédit bancaire,document_request
+quels sont les justificatifs de revenus ?,document_request
+quels sont les éléments à fournir pour l'étude de mon dossier ,document_request
