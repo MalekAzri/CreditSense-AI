@@ -1,49 +1,51 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { SessionProvider, useSession, signOut } from "next-auth/react";
+import { createContext, useContext, ReactNode, useEffect } from "react";
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    login: () => void;
+    status: "loading" | "authenticated" | "unauthenticated";
+    user: any;
     logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const router = useRouter();
+function AuthProviderInner({ children }: { children: ReactNode }) {
+    const { data: session, status } = useSession();
 
-    // Persist auth state for dev convenience
     useEffect(() => {
-        const stored = localStorage.getItem("auth_token");
-        if (stored) setIsAuthenticated(true);
-    }, []);
+        if (status === "authenticated") {
+            const updateLastSeen = () => fetch("/api/auth/heartbeat", { method: "POST" }).catch(() => { });
+            updateLastSeen();
+            const interval = setInterval(updateLastSeen, 1000 * 60 * 2); // Every 2 mins
+            return () => clearInterval(interval);
+        }
+    }, [status]);
 
-    const login = () => {
-        localStorage.setItem("auth_token", "demo_token");
-        setIsAuthenticated(true);
-        router.push("/");
+    const value = {
+        isAuthenticated: status === "authenticated",
+        status,
+        user: session?.user,
+        logout: () => signOut({ callbackUrl: "/" }),
     };
 
-    const logout = () => {
-        localStorage.removeItem("auth_token");
-        setIsAuthenticated(false);
-        router.push("/");
-    };
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
 
+export function AuthProvider({ children }: { children: ReactNode }) {
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-            {children}
-        </AuthContext.Provider>
+        <SessionProvider>
+            <AuthProviderInner>{children}</AuthProviderInner>
+        </SessionProvider>
     );
 }
 
-export function useAuth() {
+export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {
         throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
-}
+};
