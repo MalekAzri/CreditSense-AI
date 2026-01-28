@@ -1,0 +1,10 @@
+
+🔍 --- Exemple de Vecteur Reçu ---
+🆔 ID Qdrant: 0041b53e-e07f-4718-9bef-e996468e2c70
+📧 Sujet: Codeforces Round 1076 (Div. 3)
+👤 Expéditeur: Codeforces@codeforces.com
+📄 Extrait Texte Clean: Codeforces Round 1076 (Div. 3). Hello Youssef.Turki, You are welcome to register and compete in Codeforces Round 1076 (Div. 3). It starts on Sunday, January, 25, 2026 14:35 (UTC). The contest duration
+↔️ Direction: received
+📏 Dimension du vecteur: 384
+🔢 Aperçu du vecteur (5 premières valeurs): [-0.043283552, 0.016766712, 0.010709508, 0.0028421385, -0.09917151]
+-----------------------------------

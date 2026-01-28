@@ -1,0 +1,26 @@
+--- EXAMPLES OF AI UNDERSTANDING ---
+
+📧 Email Subject: Python resources for you!
+📝 Content Preview: Python resources for you!. Explore endless resources to jumpstart your progress. Hey there, Welcome ...
+🤖 AI Analysis:
+   • Detected Intent: INFO_REQUEST (Confidence: 1.0)
+   • Detected Tone: {'urgency': 0.25, 'stress': 0.25, 'seriousness': 0.76}
+   • Similar to Reference IDs: ['cfec87f1-8f0f-4f70-a12f-2fec35092476', 'a9a356fa-6499-476b-9a4e-7dd69a45d985', '7b7edb73-5f7a-4c52-afcc-2e6f4b77e6ce', '01df5f2a-bb87-4590-9583-30c0dbf47324', 'cba3df20-dd0a-4b22-ae76-91cf5fbf7f5d']
+--------------------------------------------------
+
+📧 Email Subject: Welcome to MongoDB Atlas. Let's get started.
+📝 Content Preview: Welcome to MongoDB Atlas. Let's get started.. Ready to create something amazing? Welcome to MongoDB ...
+🤖 AI Analysis:
+   • Detected Intent: INFO_REQUEST (Confidence: 1.0)
+   • Detected Tone: {'urgency': 0.25, 'stress': 0.25, 'seriousness': 0.76}
+   • Similar to Reference IDs: ['cba3df20-dd0a-4b22-ae76-91cf5fbf7f5d', 'a9a356fa-6499-476b-9a4e-7dd69a45d985', '7b7edb73-5f7a-4c52-afcc-2e6f4b77e6ce', '01df5f2a-bb87-4590-9583-30c0dbf47324', 'cfec87f1-8f0f-4f70-a12f-2fec35092476']
+--------------------------------------------------
+
+📧 Email Subject: Alerte de sécurité
+📝 Content Preview: Alerte de sécurité. [image: Google] Nouvelle connexion depuis un Windows youssef.turki@ept.ucar.tn N...
+🤖 AI Analysis:
+   • Detected Intent: INFO_REQUEST (Confidence: 1.0)
+   • Detected Tone: {'urgency': 0.25, 'stress': 0.25, 'seriousness': 0.76}
+   • Similar to Reference IDs: ['cba3df20-dd0a-4b22-ae76-91cf5fbf7f5d', 'a9a356fa-6499-476b-9a4e-7dd69a45d985', '7b7edb73-5f7a-4c52-afcc-2e6f4b77e6ce', '01df5f2a-bb87-4590-9583-30c0dbf47324', 'cfec87f1-8f0f-4f70-a12f-2fec35092476']
+--------------------------------------------------
+
