@@ -12,6 +12,7 @@ from pdf2image import convert_from_path
 from verification import verify_document, store_reference_vector
 from verification.clip import generate_clip_vector
 from verification.ocr import extract_and_embed
+from verification.config import SUPPORTED_DOCUMENT_TYPES
 
 
 # =========================
@@ -27,6 +28,30 @@ SUPPORTED_DOCS = {
 
 
 # =========================
+# HELPERS
+# =========================
+def resolve_path(path: str) -> str:
+    """
+    Tente de trouver le fichier, soit tel quel, soit dans le dossier 'docs'.
+    """
+    if not path:
+        return None
+        
+    if os.path.exists(path):
+        return os.path.abspath(path)
+        
+    # Tester dans le dossier 'docs' relatif au script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    docs_dir = os.path.join(script_dir, "docs")
+    docs_path = os.path.join(docs_dir, path)
+    
+    if os.path.exists(docs_path):
+        return docs_path
+        
+    return None
+
+
+# =========================
 # MAIN
 # =========================
 def main():
@@ -34,20 +59,18 @@ def main():
     print("SYSTÈME DE VÉRIFICATION DE DOCUMENTS - CreditSense AI")
     print("=" * 60)
 
-    print("\nChoisissez un type de document:")
-    print("1. CIN")
-    print("2. PASSPORT")
-    print("3. DEMANDE DE CRÉDIT (BTS_LOAN_APP)")
+    print("\nChoisissez le type de document:")
+    for i, t in enumerate(SUPPORTED_DOCUMENT_TYPES, 1):
+        print(f"{i}. {t}")
+    
+    type_choice = input(f"\nVotre choix (1-{len(SUPPORTED_DOCUMENT_TYPES)}): ").strip()
+    try:
+        doc_type = SUPPORTED_DOCUMENT_TYPES[int(type_choice) - 1]
+    except (ValueError, IndexError):
+        print("Choix de type invalide. Utilisation par défaut: CIN")
+        doc_type = "CIN"
 
-    doc_choice = input("\nVotre choix (1/2/3): ").strip()
-    if doc_choice not in SUPPORTED_DOCS:
-        print("Choix invalide.")
-        sys.exit(1)
-
-    document_type = SUPPORTED_DOCS[doc_choice]
-
-    print(f"\nMode sélectionné pour: {document_type}")
-    print("\nChoisissez une action:")
+    print("\nChoisissez un mode:")
     print("1. Stocker un vecteur de référence (manuel)")
     print("2. Vérifier un document")
     print("3. Vérifier → si valide → stocker automatiquement")
@@ -55,14 +78,18 @@ def main():
     action_choice = input("\nVotre choix (1/2/3): ").strip()
 
     if action_choice == "1":
-        path = input(f"Chemin de l'image {document_type} de référence: ").strip()
-        store_reference_mode(path, document_type)
+        path = input(f"Chemin de l'image {doc_type} de référence: ").strip()
+        resolved_path = resolve_path(path)
+        if resolved_path:
+            store_reference_mode(resolved_path, doc_type)
+        else:
+            print(f"[ERROR] Impossible de trouver le fichier: {path}")
 
     elif action_choice == "2":
-        verify_mode(document_type, auto_store=False)
+        verify_mode(doc_type, auto_store=False)
 
     elif action_choice == "3":
-        verify_mode(document_type, auto_store=True)
+        verify_mode(doc_type, auto_store=True)
 
     else:
         print("Choix invalide.")
@@ -73,19 +100,12 @@ def main():
 # STOCKAGE RÉFÉRENCE
 # =========================
 def store_reference_mode(image_path: str, document_type: str):
-    print(f"\nSTOCKAGE DES VECTEURS DE RÉFÉRENCE [{document_type}]")
+    print(f"\nSTOCKAGE DES VECTEURS DE RÉFÉRENCE {document_type}")
     print("-" * 60)
 
-    # -------- Résolution chemin --------
-    if not os.path.exists(image_path):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        docs_dir = os.path.join(script_dir, "docs")
-        potential_path = os.path.join(docs_dir, image_path)
-        if os.path.exists(potential_path):
-            image_path = potential_path
-        else:
-            print(f"[ERREUR] Fichier introuvable: {image_path}")
-            return
+    side = ""
+    while side not in ["front", "back"]:
+        side = input("C'est le 'front' ou le 'back' du document ? (front/back): ").strip().lower()
 
     # -------- CLIP --------
     clip_vector = generate_clip_vector(image_path)
@@ -95,10 +115,7 @@ def store_reference_mode(image_path: str, document_type: str):
             vector_type="clip",
             vector=clip_vector,
             point_id=str(uuid.uuid4()),
-            metadata={
-                "source": "reference",
-                "document_type": document_type.lower()
-            }
+            metadata={"source": "auto_reference", "type": document_type.lower(), "side": side}
         )
         print("[OK] Vecteur CLIP stocké")
     else:
@@ -112,42 +129,40 @@ def store_reference_mode(image_path: str, document_type: str):
                 document_type=document_type,
                 vector_type="ocr",
                 vector=chunk["embedding"],
-                point_id=chunk.get("point_id", str(uuid.uuid4())),
+                point_id=chunk["point_id"],
                 metadata={
                     "doc_id": doc_id,
                     "chunk_index": chunk["chunk_index"],
-                    "document_type": document_type.lower()
+                    "type": document_type.lower(),
+                    "side": side
                 }
             )
-        print(f"[OK] {len(embeddings)} vecteurs OCR stockés")
+        print(f"[OK] {len(embeddings)} vecteurs OCR stockes")
     else:
-        print("[ERREUR] Échec de génération des vecteurs OCR")
+        print("[WARN] Aucun vecteur OCR généré (OCR a peut-être échoué)")
 
 
 # =========================
 # VÉRIFICATION
 # =========================
 def verify_mode(document_type: str, auto_store: bool = False):
-    doc_input = input(
-        f"\nChemin du document {document_type} (image ou PDF): "
-    ).strip()
+    doc_input = input("\nChemin du document (image ou PDF): ").strip()
+    stored_path = resolve_path(doc_input)
+
+    if not stored_path:
+        print("Fichier introuvable.")
+        return
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     docs_dir = os.path.join(script_dir, "docs")
     os.makedirs(docs_dir, exist_ok=True)
 
-    # -------- Résolution chemin --------
-    if not os.path.exists(doc_input):
-        doc_input = os.path.join(docs_dir, doc_input)
-        if not os.path.exists(doc_input):
-            print("Fichier introuvable.")
-            return
+    filename = os.path.basename(stored_path)
+    final_docs_path = os.path.join(docs_dir, filename)
 
-    filename = os.path.basename(doc_input)
-    stored_path = os.path.join(docs_dir, filename)
-
-    if doc_input != stored_path:
-        shutil.copy(doc_input, stored_path)
+    if stored_path != final_docs_path:
+        shutil.copy(stored_path, final_docs_path)
+        stored_path = final_docs_path
 
     print(f"\nDocument stocké sous: {stored_path}")
 
@@ -195,10 +210,10 @@ def verify_mode(document_type: str, auto_store: bool = False):
         print(f"[OK] DOCUMENT RECONNU COMME {document_type}")
 
         if auto_store:
-            print("[INFO] Stockage automatique des vecteurs")
+            print(f"[INFO] Stockage automatique des vecteurs ({document_type} reconnu)")
             store_reference_mode(best_page, document_type)
     else:
-        print(f"[KO] DOCUMENT NON {document_type} / NON RECONNU")
+        print(f"[KO] DOCUMENT NON RECONNU COMME {document_type}")
 
     print("=" * 60)
 

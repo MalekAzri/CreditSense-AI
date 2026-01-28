@@ -1,0 +1,179 @@
+Total found: 20
+
+ID: 69795e9c0c547b9c16b588d5
+SENDER: Youssef Turki <youssefturki999@gmail.com>
+SUBJECT: Credit
+TEXT PREVIEW: 
+EXTRACTED DATA: {'amount': None, 'currency': None, 'credit_type': None, 'client_info': {'name': None, 'cin': None, 'phone': None, 'email': None}, 'reference': None, 'documents_mentioned': [], 'attachments': []}
+--------------------
+ID: 69795c53c1a55b98d67fe123
+SENDER: Youssef Turki <youssefturki999@gmail.com>
+SUBJECT: Credit
+TEXT PREVIEW: 
+EXTRACTED DATA: {'summary': 'Credit .'}
+--------------------
+ID: 69795b7194b92fcacac2a600
+SENDER: Youssef Turki <youssefturki999@gmail.com>
+SUBJECT: Credit
+TEXT PREVIEW: 
+EXTRACTED DATA: {'summary': 'Credit .'}
+--------------------
+ID: 6979589b1dbc66740a187f33
+SENDER: Ghaith Kammoun <invitations@linkedin.com>
+SUBJECT: Je viens de vous envoyer une demande de connexion
+TEXT PREVIEW: Ghaith attend votre réponse
+        
+Bonjour Youssef, je souhaiterais rejoindre votre réseau professionnel
+
+Ghaith Kammoun
+Student at Tunisia Polytechnic School
+La Marsa
+2 relations en commun
+
+EXTRACTED DATA: {'summary': 'Je viens de vous envoyer une demande de connexion '}
+--------------------
+ID: 6979589b1dbc66740a187f32
+SENDER: Mohamed Fathi KAROUI <mohamedfathi.karoui@ept.ucar.tn>
+SUBJECT: cours système logique du lundi 26 janvier
+TEXT PREVIEW: Bonjour
+
+Il n'y aura pas de séance de cours conception des système logique
+aujourd'hui lundi 26 janvier pour le groupe 1.
+
+cordialement
+
+
+-- 
+Mohamed Fathi KAROUI
+Head of the Department of M
+EXTRACTED DATA: {'summary': 'cours système logique du lundi 26 janvier . Bonjou'}
+--------------------
+ID: 6979589a1dbc66740a187f31
+SENDER: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
+SUBJECT: Delivery Status Notification (Failure)
+TEXT PREVIEW: 
+EXTRACTED DATA: {'summary': 'Delivery Status Notification (Failure) .'}
+--------------------
+ID: 6979589a1dbc66740a187f30
+SENDER: LinkedIn <updates-noreply@linkedin.com>
+SUBJECT: Imen Jemai et d’autres personnes font part de leurs réflexions sur LinkedIn
+TEXT PREVIEW: Imen Jemaia partagé un post : 📢📢 Nous recrutons : Techniciens câblage (H/F)
+ 📍 Sagemcom BEN AROUS
+
+Missions principales:
+En tant que technicien câblage, vous serez chargé(e) de…
+J’AIME EMPATHIE I
+EXTRACTED DATA: {'summary': 'Imen Jemai et d’autres personnes font part de leur'}
+--------------------
+ID: 6979589a1dbc66740a187f2f
+SENDER: GitHub <noreply@github.com>
+SUBJECT: [GitHub] Please reset your password
+TEXT PREVIEW: 
+We heard that you lost your GitHub password. Sorry about that!
+
+But don’t worry! You can use the following link to reset your password:
+
+https://github.com/password_reset/B3SXIUXSSAIDF7JL24WBK23
+EXTRACTED DATA: {'summary': '[GitHub] Please reset your password . We heard tha'}
+--------------------
+ID: 697958991dbc66740a187f2e
+SENDER: GitHub <noreply@github.com>
+SUBJECT: [GitHub] Please reset your password
+TEXT PREVIEW: 
+We heard that you lost your GitHub password. Sorry about that!
+
+But don’t worry! You can use the following link to reset your password:
+
+https://github.com/password_reset/B3SXIUQPOWLCH5IZJXLSR7D
+EXTRACTED DATA: {'summary': '[GitHub] Please reset your password . We heard tha'}
+--------------------
+ID: 697958991dbc66740a187f2d
+SENDER: "Sahar (via LinkedIn)" <messages-noreply@linkedin.com>
+SUBJECT: Youssef, j’attends votre réponse
+TEXT PREVIEW: {:hasSenderJobTitle}
+        
+
+Sahar attend votre réponse
+Sahar Tounsi vous a envoyé une invitation le 16 janvier 2026 à 21:28
+
+
+Sahar Tounsi
+Étudiant(e) à Ecole nationale supérieure des ingén
+EXTRACTED DATA: {'summary': 'Youssef, j’attends votre réponse . {:hasSenderJobT'}
+--------------------
+ID: 697958981dbc66740a187f2c
+SENDER: DataCamp Insights <team@datacamp.com>
+SUBJECT: New: Azure Developer Associate Track
+TEXT PREVIEW: DataCamp
+
+Newsletter
+
+ 
+
+Your Weekly Progress
+
+404: Progress Not Found 😅
+
+JAN 19 – JAN 25
+
+Looks like your learning streak took a quick nap. One short session is all it takes to wake it ba
+EXTRACTED DATA: {'summary': 'New: Azure Developer Associate Track . DataCamp Ne'}
+--------------------
+ID: 697958981dbc66740a187f2b
+SENDER: LinkedIn <notifications-noreply@linkedin.com>
+SUBJECT: Sarah Ben Hadj Braiek a repartagé un post
+TEXT PREVIEW: Sarah Ben Hadj Braiek a repartagé un post
+Commentaire :https://www.linkedin.com/comm/feed/update/activity:7421836050706190336?lipi=urn%3Ali%3Apage%3Aemail_email_notification_digest_01%3B5Is0IkZwSn6gD
+EXTRACTED DATA: {'summary': 'Sarah Ben Hadj Braiek a repartagé un post . Sarah '}
+--------------------
+ID: 697958981dbc66740a187f2a
+SENDER: Leila DRIDI <leila.dridi@ept.ucar.tn>
+SUBJECT: Soutenances - Séminaires & Exposés
+TEXT PREVIEW: Bonsoir
+Je voudrais vous informer que les soutenances du  module  'Séminaires  &
+exposés" auront lieu demain mercredi 28 janvier 2026 à partir de 14h
+Je vous enverrai le planning de passage des gro
+EXTRACTED DATA: {'summary': 'Soutenances - Séminaires & Exposés . Bonsoir Je vo'}
+--------------------
+ID: 6979565b4f5821c4847c2625
+SENDER: debug@gmail.com
+SUBJECT: Debug Credit Request
+TEXT PREVIEW: Je veux un crédit auto de 50000 EUR
+EXTRACTED DATA: {'summary': 'Debug Credit Request . Je veux un crédit auto de 5'}
+--------------------
+ID: 6979560c6ae667a612b070b3
+SENDER: debug@gmail.com
+SUBJECT: Debug Credit Request
+TEXT PREVIEW: Je veux un crédit auto de 50000 EUR
+EXTRACTED DATA: {'summary': 'Debug Credit Request . Je veux un crédit auto de 5'}
+--------------------
+ID: 697954d23df8ea25e5ffd3b3
+SENDER: debug@gmail.com
+SUBJECT: Debug Credit Request
+TEXT PREVIEW: Je veux un crédit auto de 50000 EUR
+EXTRACTED DATA: {'summary': 'Debug Credit Request . Je veux un crédit auto de 5'}
+--------------------
+ID: 697954adca395a629469022b
+SENDER: debug@gmail.com
+SUBJECT: Debug Credit Request
+TEXT PREVIEW: Je veux un crédit auto de 50000 EUR
+EXTRACTED DATA: {'summary': 'Debug Credit Request . Je veux un crédit auto de 5'}
+--------------------
+ID: 6979544c5bd3f55fbd05b370
+SENDER: new.client@gmail.com
+SUBJECT: Demande de prêt auto
+TEXT PREVIEW: Bonjour, je voudrais un crédit auto de 40000 DT sur 4 ans pour acheter une Golf. Merci.
+EXTRACTED DATA: {'summary': 'Demande de prêt auto . Bonjour, je voudrais un cré'}
+--------------------
+ID: 697953f35bd3f55fbd05b36f
+SENDER: new.client@gmail.com
+SUBJECT: Demande de prêt auto
+TEXT PREVIEW: Bonjour, je voudrais un crédit auto de 40000 DT sur 4 ans pour acheter une Golf. Merci.
+EXTRACTED DATA: {'summary': 'Demande de prêt auto . Bonjour, je voudrais un cré'}
+--------------------
+ID: 6979525b5bd3f55fbd05b36e
+SENDER: new.client@gmail.com
+SUBJECT: Demande de prêt auto
+TEXT PREVIEW: Bonjour, je voudrais un crédit auto de 40000 DT sur 4 ans pour acheter une Golf. Merci.
+EXTRACTED DATA: {'summary': 'Demande de prêt auto . Bonjour, je voudrais un cré'}
+--------------------

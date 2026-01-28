@@ -6,8 +6,8 @@ Compatible Qdrant Cloud / local, sans qdrant-client
 import sys
 import os
 import uuid
-import requests
 from typing import Dict, Optional, Union
+import requests
 from .clip import generate_clip_vector
 from .ocr import extract_and_embed
 from .config import (
@@ -127,6 +127,8 @@ def query_qdrant(collection_name: str, vector, limit: int = 1):
         print(f"[ERREUR] Recherche Qdrant: {r.text}")
         return []
 
+# Fuzzy keyword check removed
+
 # =========================
 # Vérification document
 # =========================
@@ -198,13 +200,16 @@ def verify_document(image_path: str, document_type: str = "CIN") -> Dict:
         else:
             result["errors"].append("Échec génération vecteurs OCR")
 
-        # 3. Verdict final
-        clip_valid = result["clip_similarity"] >= result["clip_threshold"]
-        ocr_valid = result["ocr_similarity"] >= result["ocr_threshold"]
-        result["is_valid"] = clip_valid and ocr_valid
+        # 3. Verdict final : Multi-critères indépendants (CLIP et OCR uniquement)
+        clip_ok = result["clip_similarity"] >= result["clip_threshold"]
+        ocr_ok = result["ocr_similarity"] >= result["ocr_threshold"]
+        
+        result["is_valid"] = clip_ok and ocr_ok
 
         print(f"\n{'='*50}")
-        print(f"RESULTAT: {'VALIDE' if result['is_valid'] else 'INVALIDE'}")
+        print(f"VERDICT: {'VALIDE' if result['is_valid'] else 'INVALIDE'}")
+        print(f"Détails: CLIP={clip_ok} ({result['clip_similarity']:.2f}), "
+              f"OCR={ocr_ok} ({result['ocr_similarity']:.2f})")
         print(f"{'='*50}")
 
         return result

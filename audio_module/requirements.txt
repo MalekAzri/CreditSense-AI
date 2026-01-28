@@ -1,0 +1,10 @@
+# Ce fichier liste les dépendances Python nécessaires pour le module audio.
+fastapi
+uvicorn
+python-multipart
+sqlalchemy
+pydantic
+celery
+redis
+sqlalchemy
+
