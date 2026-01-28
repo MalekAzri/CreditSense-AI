@@ -12,6 +12,13 @@ import email
 from email.mime.text import MIMEText
 from file_manager import file_manager
 from message_logger import message_logger
+from pymongo import MongoClient
+from dotenv import load_dotenv
+
+load_dotenv()
+client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017"))
+db = client[os.getenv("DB_NAME", "creditapp")]
+collection = db.messages
 
 # Configuration
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
@@ -41,8 +48,8 @@ def authenticate_gmail():
             
             flow = InstalledAppFlow.from_client_secrets_file(
                 credentials_path, SCOPES)
-            # On force le port 8080 pour correspondre à la configuration Web de Google Cloud
-            creds = flow.run_local_server(port=8080)
+            # On utilise le port 8090 pour éviter les conflits
+            creds = flow.run_local_server(port=8090)
         
         # Sauvegarder les credentials pour la prochaine exécution
         with open(token_path, 'w') as token:
@@ -180,29 +187,24 @@ def fetch_and_send_emails(max_results=10):
                 "status": "raw"
             }
             
-            # Envoyer à l'API FastAPI
+            # Insérer directement dans MongoDB (Bypass API Instable)
             try:
-                api_start = time.time()
-                response = requests.post(API_URL, json=message_json)
-                response.raise_for_status()
-                api_time = (time.time() - api_start) * 1000  # en ms
+                # Vérifier si l'email existe déjà (par message_id)
+                exists = collection.find_one({"metadata.message_id": msg_info['id']})
+                if exists:
+                    print(f"[SKIP] Message déjà présent: {subject}")
+                    continue
                 
-                print(f"✅ Message envoyé avec succès: {subject}")
-                print(f"   Réponse: {response.json()}")
+                result = collection.insert_one(message_json)
+                msg_id = str(result.inserted_id)
                 
-                # Logger le succès
-                message_logger.log_message(
-                    source='gmail',
-                    sender=sender,
-                    status='success',
-                    attachments_count=len(attachments),
-                    subject=subject
-                )
-                message_logger.log_api_call('/messages/', response.status_code, api_time)
+                print(f"[OK] Message inséré directement dans Mongo: {subject} (ID: {msg_id})")
+                
+                # Message inséré avec succès
                 success_count += 1
                 
             except requests.exceptions.RequestException as e:
-                print(f"❌ Erreur lors de l'envoi à l'API: {e}")
+                print(f"[ERROR] Erreur lors de l'envoi à l'API: {e}")
                 if hasattr(e.response, 'text'):
                     print(f"   Détails: {e.response.text}")
                 
@@ -228,6 +230,6 @@ def fetch_and_send_emails(max_results=10):
 
 
 if __name__ == "__main__":
-    print("🔄 Démarrage de la récupération des emails Gmail...")
+    print("[INFO] Starting fetch...")
     fetch_and_send_emails(max_results=10)
-    print("✅ Processus terminé.")
+    print("[SUCCESS] Process complete.")

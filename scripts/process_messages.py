@@ -310,7 +310,8 @@ def extract_key_info(text, attachments=None):
 
 def main():
     db = get_db()
-    messages = db.messages.find({"status": "raw"})
+    # Process both 'raw' and 'training_data' (synthetic) messages
+    messages = db.messages.find({"status": {"$in": ["raw", "training_data"]}})
     
     count = 0
     logging.info("Starting NLP processing...")

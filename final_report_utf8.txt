@@ -1,0 +1,21 @@
+﻿==================================================
+TEST RESULT (REAL-TIME)
+==================================================
+Subject   : Credit
+Sender    : Youssef Turki <youssefturki999@gmail.com>
+Status    : processed
+
+EXTRACTED DATA (PHASE 1 & 2):
+  Clean Text: Credit....
+  Credit Type: None
+  Amount: None None
+  Client Name: None
+  Phone: None
+  CIN: None
+  Reference: None
+
+AI ANALYSIS:
+  Intent     : CREDIT_REQUEST
+  Confidence : 1.0
+  Tone       : Urgency=0.48, Stress=0.26, Seriousness=0.86
+==================================================
