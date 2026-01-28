@@ -39,7 +39,6 @@ ENV/
 .DS_Store
 
 # Model files (large files)
-*.pkl
 *.h5
 *.joblib
 *.model

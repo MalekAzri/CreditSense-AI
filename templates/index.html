@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreditSense AI | Analyse de Risque Intelligente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container fade-in">
+        <header>
+            <h1>CreditSense AI</h1>
+            <p>Système expert d'analyse de solvabilité basé sur Qdrant & Scikit-Learn</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value" id="stat-total">-</span>
+                <span class="stat-label">Clients en Base</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="stat-dim">-</span>
+                <span class="stat-label">Dimensions Vecteurs</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="stat-metric">-</span>
+                <span class="stat-label">Métrique Distance</span>
+            </div>
+        </div>
+
+        <main class="dashboard">
+            <!-- Formulaire de Saisie -->
+            <section class="card">
+                <h2>Profil du Candidat</h2>
+                <form id="scoring-form">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Statut du Compte</label>
+                            <select name="status_account">
+                                <option value="A11">
+                                    < 0 DM</option>
+                                <option value="A12" selected>0 <= ... < 200 DM</option>
+                                <option value="A13">>= 200 DM</option>
+                                <option value="A14">Pas de compte</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Durée (mois)</label>
+                            <input type="number" name="duration" value="24">
+                        </div>
+                        <div class="input-group">
+                            <label>Historique Crédit</label>
+                            <select name="credit_history">
+                                <option value="A30">Pas de crédit/Tout payé</option>
+                                <option value="A31">Tout payé dans cette banque</option>
+                                <option value="A32" selected>Crédits existants ok</option>
+                                <option value="A33">Retards passés</option>
+                                <option value="A34">Compte critique</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Montant du Crédit</label>
+                            <input type="number" name="credit_amount" value="3000">
+                        </div>
+                        <div class="input-group">
+                            <label>Épargne</label>
+                            <select name="savings">
+                                <option value="A61" selected>
+                                    < 100 DM</option>
+                                <option value="A62">100 <= ... < 500 DM</option>
+                                <option value="A63">500 <= ... < 1000 DM</option>
+                                <option value="A64">>= 1000 DM</option>
+                                <option value="A65">Inconnu/Pas d'épargne</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Âge</label>
+                            <input type="number" name="age" value="35">
+                        </div>
+                        <div class="input-group">
+                            <label>Emploi</label>
+                            <select name="employment">
+                                <option value="A71">Chômeur</option>
+                                <option value="A72">
+                                    < 1 an</option>
+                                <option value="A73" selected>1-4 ans</option>
+                                <option value="A74">4-7 ans</option>
+                                <option value="A75">>= 7 ans</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Logement</label>
+                            <select name="housing">
+                                <option value="A151">Loyer</option>
+                                <option value="A152" selected>Propriétaire</option>
+                                <option value="A153">Gratuit</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Objectif du Crédit</label>
+                            <select name="purpose">
+                                <option value="A40">Voiture neuve</option>
+                                <option value="A41">Voiture occasion</option>
+                                <option value="A42">Meubles/Équipement</option>
+                                <option value="A43" selected>Radio/Télévision</option>
+                                <option value="A44">Appareils ménagers</option>
+                                <option value="A45">Réparations</option>
+                                <option value="A46">Éducation</option>
+                                <option value="A48">Retraining</option>
+                                <option value="A49">Business</option>
+                                <option value="A410">Autres</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Taux d'échelonnement (%)</label>
+                            <select name="installment_rate">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Statut Personnel & Sexe</label>
+                            <select name="personal_status">
+                                <option value="A91">Homme : divorcé/séparé</option>
+                                <option value="A92">Femme : divorcée/séparée/mariée</option>
+                                <option value="A93" selected>Homme : célibataire</option>
+                                <option value="A94">Homme : marié/veuf</option>
+                                <option value="A95">Femme : célibataire</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Autres débiteurs / Garants</label>
+                            <select name="other_debtors">
+                                <option value="A101" selected>Aucun</option>
+                                <option value="A102">Co-candidat</option>
+                                <option value="A103">Garant</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Résident depuis (années)</label>
+                            <select name="residence_since">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Propriété</label>
+                            <select name="property">
+                                <option value="A121" selected>Immobilier</option>
+                                <option value="A122">Épargne société/Assurance vie</option>
+                                <option value="A123">Voiture ou autre</option>
+                                <option value="A124">Inconnue / Aucune</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Autres plans de versement</label>
+                            <select name="other_installments">
+                                <option value="A141">Banque</option>
+                                <option value="A142">Magasins</option>
+                                <option value="A143" selected>Aucun</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Crédits existants (cette banque)</label>
+                            <select name="existing_credits">
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4+</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Poste / Qualification</label>
+                            <select name="job">
+                                <option value="A171">Chômeur/Non qualifié - non-résident</option>
+                                <option value="A172">Non qualifié - résident</option>
+                                <option value="A173" selected>Qualifié / Employé</option>
+                                <option value="A174">Cadre / Indépendant / Hautement qualifié</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Personnes à charge</label>
+                            <select name="people_liable">
+                                <option value="1" selected>1</option>
+                                <option value="2">2+</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Téléphone</label>
+                            <select name="telephone">
+                                <option value="A191" selected>Aucun</option>
+                                <option value="A192">Oui, enregistré à mon nom</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Travailleur étranger</label>
+                            <select name="foreign_worker">
+                                <option value="A201" selected>Oui</option>
+                                <option value="A202">Non</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Analyser le Dossier</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Résultats et Similarité -->
+            <div class="results-container">
+                <section class="card" id="results-card" style="display: none;">
+                    <h2>Résultat du Scoring</h2>
+                    <div class="score-display">
+                        <div class="score-ring">
+                            <span class="score-value" id="score-text">0</span>
+                            <span class="score-label">Score / 100</span>
+                        </div>
+                        <div id="decision-badge" class="decision-badge">
+                            EN ATTENTE
+                        </div>
+                        <p style="margin-top: 1.5rem; color: var(--text-muted);">
+                            Probabilité de risque estimée : <strong id="risk-proba" style="color: white;">0%</strong>
+                        </p>
+                    </div>
+                </section>
+
+                <section class="card" id="similarity-card" style="display: none;">
+                    <h2>Profils Similaires (Qdrant)</h2>
+                    <div class="similar-clients-list" id="similar-list">
+                        <!-- Items injected via JS -->
+                    </div>
+                </section>
+
+                <section class="card" id="initial-msg">
+                    <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                            style="margin-bottom: 1rem; opacity: 0.5;">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <p>Remplissez le formulaire pour démarrer l'analyse IA.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Charger les statistiques au démarrage
+        async function fetchStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('stat-total').textContent = data.total_clients;
+                    document.getElementById('stat-dim').textContent = data.vector_dimensions;
+                    document.getElementById('stat-metric').textContent = data.distance_metric;
+                }
+            } catch (err) {
+                console.error("Erreur stats:", err);
+            }
+        }
+
+        document.getElementById('scoring-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Collecte des données
+            const formData = new FormData(e.target);
+            const clientData = {};
+            formData.forEach((value, key) => {
+                clientData[key] = isNaN(value) || value.startsWith('A') ? value : Number(value);
+            });
+
+            // Affichage loader
+            document.querySelector('.btn-primary').textContent = "Analyse en cours...";
+            document.querySelector('.btn-primary').disabled = true;
+
+            try {
+                const response = await fetch('/api/score', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ client_data: clientData })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    displayResults(result);
+                } else {
+                    alert("Erreur: " + result.error);
+                }
+            } catch (err) {
+                alert("Erreur de connexion au serveur");
+            } finally {
+                document.querySelector('.btn-primary').textContent = "Analyser le Dossier";
+                document.querySelector('.btn-primary').disabled = false;
+            }
+        });
+
+        function displayResults(data) {
+            document.getElementById('initial-msg').style.display = 'none';
+            document.getElementById('results-card').style.display = 'block';
+            document.getElementById('similarity-card').style.display = 'block';
+
+            // Score & Décision
+            const scoreText = document.getElementById('score-text');
+            scoreText.textContent = Math.round(data.score);
+
+            const badge = document.getElementById('decision-badge');
+            badge.textContent = data.decision;
+            badge.className = 'decision-badge ' +
+                (data.decision === 'ACCEPTÉ' ? 'decision-accepted' : 'decision-refused');
+
+            document.getElementById('risk-proba').textContent = (data.proba_risque * 100).toFixed(1) + '%';
+
+            // Clients Similaires
+            const list = document.getElementById('similar-list');
+            list.innerHTML = '';
+
+            data.similar_clients.forEach(client => {
+                const item = document.createElement('div');
+                item.className = 'client-item';
+                item.innerHTML = `
+                    <div class="client-info">
+                        <strong>Client ID: ${client.id}</strong>
+                        <span>Score: ${Math.round(client.score)}/100 • ${client.decision}</span>
+                    </div>
+                    <div class="similarity-score">
+                        ${(client.similarity * 100).toFixed(1)}% match
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            // Animation simple
+            document.getElementById('results-card').classList.add('fade-in');
+            document.getElementById('similarity-card').classList.add('fade-in');
+        }
+
+        window.onload = fetchStats;
+    </script>
+</body>
+
+</html>

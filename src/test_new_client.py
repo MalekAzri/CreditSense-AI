@@ -47,11 +47,11 @@ def main():
     # 2. Définition d'une nouvelle ligne de données (Exemple de client)
     # Note: On utilise les noms de colonnes originaux avant encodage
     nouveau_client = {
-        'status_account': 'A11',      # < 0 DM
+        'status_account': 'A13',      # < 0 DM
         'duration': 24,               # 24 mois
-        'credit_history': 'A32',      # Crédits existants remboursés
-        'purpose': 'A43',             # Radio/TV
-        'credit_amount': 4870,        # Montant
+        'credit_history': 'A33',      # Crédits existants remboursés
+        'purpose': 'A41',             # Radio/TV
+        'credit_amount': 1500,        # Montant
         'savings': 'A61',             # < 100 DM
         'employment': 'A73',          # Employé depuis 1-4 ans
         'installment_rate': 3,        # Taux d'endettement
@@ -61,9 +61,9 @@ def main():
         'property': 'A121',           # Immobilier
         'age': 53,                    # Âge
         'other_installments': 'A143', # Aucun
-        'housing': 'A153',            # Logement gratuit
-        'existing_credits': 2,        # 2 crédits en cours
-        'job': 'A173',                # Qualifié
+        'housing': 'A151',            # Logement gratuit
+        'existing_credits': 0,        # 2 crédits en cours
+        'job': 'A174',                # Qualifié
         'people_liable': 1,           # 1 personne à charge
         'telephone': 'A191',          # Aucun
         'foreign_worker': 'A201'      # Oui
