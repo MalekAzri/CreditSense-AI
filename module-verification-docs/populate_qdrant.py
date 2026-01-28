@@ -10,93 +10,86 @@ from typing import Dict
 # Ajouter le dossier parent au path pour importer verification
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from verification.verify_document import store_reference_vector, get_qdrant_client, ensure_collections_exist
+from verification import store_reference_vector, ensure_collections_exist, delete_collection
 from verification.clip import generate_clip_vector
 from verification.ocr import extract_and_embed
 from verification.config import get_collection_config
 
-def clear_collection(collection_name: str):
-    """Supprime tous les points d'une collection."""
-    client = get_qdrant_client()
-    if client.collection_exists(collection_name):
-        print(f"Suppression des points de la collection: {collection_name}...")
-        client.delete(
-            collection_name=collection_name,
-            points_selector={"has_id": [id for id in client.scroll(collection_name=collection_name, limit=1000)[0]]} if client.scroll(collection_name=collection_name, limit=1)[0] else None,
-            # Note: Si la collection est vide, delete avec selector vide peut échouer selon les versions.
-            # On utilise une approche plus radicale: recréer la collection ou delete par filtre match_all.
-            filter=None # Supprimer tout
-        )
-        print(f"Collection {collection_name} videe.")
-
-def process_and_store(image_path: str, side: str):
-    """Traite une image et stocke ses vecteurs CLIP et OCR."""
-    print(f"\nProcessing {side.upper()} side: {image_path}")
-    document_type = "CIN"
+def process_and_store(image_path: str, document_type: str, side: str = "front"):
+    """Traite une image et stocke ses vecteurs CLIP et OCR pour un type de doc donné."""
+    print(f"\nProcessing {document_type} ({side}): {image_path}")
     
     # 1. CLIP
-    print(f"Generating CLIP vector for {side}...")
+    print(f"Generating CLIP vector...")
     clip_vector = generate_clip_vector(image_path)
     if clip_vector is not None:
         point_id = str(uuid.uuid4())
         metadata = {
-            "source": f"CIN_{side}_reference",
+            "source": f"{document_type}_{side}_reference",
             "doc_side": side,
-            "type": "legitimate"
+            "type": "legitimate",
+            "document_type": document_type
         }
         store_reference_vector(document_type, "clip", clip_vector, point_id, metadata)
     else:
-        print(f"Failed to generate CLIP vector for {side}")
+        print(f"Failed to generate CLIP vector for {image_path}")
 
     # 2. OCR
-    print(f"Extracting OCR chunks for {side}...")
+    print(f"Extracting OCR chunks...")
     text, doc_id, embeddings = extract_and_embed(image_path)
     if embeddings:
-        print(f"Storing {len(embeddings)} OCR chunks for {side}...")
+        print(f"Storing {len(embeddings)} OCR chunks...")
         for chunk in embeddings:
             metadata = {
-                "source": f"CIN_{side}_reference",
+                "source": f"{document_type}_{side}_reference",
                 "doc_side": side,
                 "doc_id": doc_id,
                 "type": "legitimate",
+                "document_type": document_type,
                 "chunk_index": chunk["chunk_index"],
                 "text_preview": chunk["text_preview"]
             }
             chunk_point_id = str(uuid.uuid4()) 
             store_reference_vector(document_type, "ocr", chunk["embedding"], chunk_point_id, metadata)
     else:
-        print(f"Failed to generate OCR embeddings for {side}")
+        print(f"Failed to generate OCR embeddings for {image_path}")
+
+def reset_and_populate(document_type: str, images_map: Dict[str, str]):
+    """Reset les collections d'un type de doc et les remplit avec les images fournies."""
+    print(f"\n=== Populating {document_type} ===")
+    ensure_collections_exist(document_type)
+    config = get_collection_config(document_type)
+    
+    # Reset
+    print(f"Resetting collections for {document_type}...")
+    delete_collection(config["clip_collection"])
+    delete_collection(config["ocr_collection"])
+    ensure_collections_exist(document_type)
+    
+    # Process images
+    for side, path in images_map.items():
+        if os.path.exists(path):
+            process_and_store(path, document_type, side)
+        else:
+            print(f"Warning: Image not found: {path}")
 
 def main():
-    # Chemins des images
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    front_path = os.path.join(script_dir, "docs", "CIN.png")
-    back_path = os.path.join(script_dir, "docs", "CIN_back.png")
+    docs_dir = os.path.join(script_dir, "docs")
     
-    # 1. S'assurer que les collections existent
-    ensure_collections_exist("CIN")
+    # Configuration des documents à peupler
+    docs_to_populate = {
+        "CIN": {
+            "front": os.path.join(docs_dir, "CIN.png"),
+            "back": os.path.join(docs_dir, "CIN_back.png")
+        },
+        "BTS_LOAN_APP": {
+            "front": os.path.join(docs_dir, "bts_loan_app.png")
+        }
+    }
     
-    # 2. Vider les collections
-    config = get_collection_config("CIN")
-    client = get_qdrant_client()
-    
-    client.delete_collection(config["clip_collection"])
-    client.delete_collection(config["ocr_collection"])
-    
-    print("Collections supprimees pour reset complet.")
-    ensure_collections_exist("CIN")
-    
-    # 3. Traiter Front
-    if os.path.exists(front_path):
-        process_and_store(front_path, "front")
-    else:
-        print(f"Front image not found: {front_path}")
-        
-    # 4. Traiter Back
-    if os.path.exists(back_path):
-        process_and_store(back_path, "back")
-    else:
-        print(f"Back image not found: {back_path}")
+    for doc_type, images in docs_to_populate.items():
+        reset_and_populate(doc_type, images)
 
     print("\nQdrant population completed successfully.")
 

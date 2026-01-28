@@ -1,5 +1,6 @@
 """
 Script principal pour tester le système de vérification de documents.
+CreditSense AI
 """
 
 import os
@@ -16,8 +17,13 @@ from verification.ocr import extract_and_embed
 # =========================
 # CONFIG
 # =========================
-DOCUMENT_TYPE = "CIN"
 POPPLER_PATH = r"D:\Release-25.12.0-0\poppler-25.12.0\Library\bin"
+
+SUPPORTED_DOCS = {
+    "1": "CIN",
+    "2": "PASSPORT",
+    "3": "BTS_LOAN_APP"
+}
 
 
 # =========================
@@ -28,22 +34,35 @@ def main():
     print("SYSTÈME DE VÉRIFICATION DE DOCUMENTS - CreditSense AI")
     print("=" * 60)
 
-    print("\nChoisissez un mode:")
+    print("\nChoisissez un type de document:")
+    print("1. CIN")
+    print("2. PASSPORT")
+    print("3. DEMANDE DE CRÉDIT (BTS_LOAN_APP)")
+
+    doc_choice = input("\nVotre choix (1/2/3): ").strip()
+    if doc_choice not in SUPPORTED_DOCS:
+        print("Choix invalide.")
+        sys.exit(1)
+
+    document_type = SUPPORTED_DOCS[doc_choice]
+
+    print(f"\nMode sélectionné pour: {document_type}")
+    print("\nChoisissez une action:")
     print("1. Stocker un vecteur de référence (manuel)")
     print("2. Vérifier un document")
-    print("3. Vérifier → si CIN valide → stocker automatiquement")
+    print("3. Vérifier → si valide → stocker automatiquement")
 
-    choice = input("\nVotre choix (1/2/3): ").strip()
+    action_choice = input("\nVotre choix (1/2/3): ").strip()
 
-    if choice == "1":
-        path = input("Chemin de l'image CIN de référence: ").strip()
-        store_reference_mode(path)
+    if action_choice == "1":
+        path = input(f"Chemin de l'image {document_type} de référence: ").strip()
+        store_reference_mode(path, document_type)
 
-    elif choice == "2":
-        verify_mode(auto_store=False)
+    elif action_choice == "2":
+        verify_mode(document_type, auto_store=False)
 
-    elif choice == "3":
-        verify_mode(auto_store=True)
+    elif action_choice == "3":
+        verify_mode(document_type, auto_store=True)
 
     else:
         print("Choix invalide.")
@@ -53,51 +72,71 @@ def main():
 # =========================
 # STOCKAGE RÉFÉRENCE
 # =========================
-def store_reference_mode(image_path: str):
-    print("\nSTOCKAGE DES VECTEURS DE RÉFÉRENCE CIN")
+def store_reference_mode(image_path: str, document_type: str):
+    print(f"\nSTOCKAGE DES VECTEURS DE RÉFÉRENCE [{document_type}]")
     print("-" * 60)
+
+    # -------- Résolution chemin --------
+    if not os.path.exists(image_path):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        docs_dir = os.path.join(script_dir, "docs")
+        potential_path = os.path.join(docs_dir, image_path)
+        if os.path.exists(potential_path):
+            image_path = potential_path
+        else:
+            print(f"[ERREUR] Fichier introuvable: {image_path}")
+            return
 
     # -------- CLIP --------
     clip_vector = generate_clip_vector(image_path)
     if clip_vector is not None:
         store_reference_vector(
-            document_type=DOCUMENT_TYPE,
+            document_type=document_type,
             vector_type="clip",
             vector=clip_vector,
             point_id=str(uuid.uuid4()),
-            metadata={"source": "auto_reference", "type": "cin"}
+            metadata={
+                "source": "reference",
+                "document_type": document_type.lower()
+            }
         )
-        print("[OK] CLIP stocke")
+        print("[OK] Vecteur CLIP stocké")
+    else:
+        print("[ERREUR] Échec de génération du vecteur CLIP")
 
     # -------- OCR --------
     extracted_text, doc_id, embeddings = extract_and_embed(image_path)
-    for chunk in embeddings:
-        store_reference_vector(
-            document_type=DOCUMENT_TYPE,
-            vector_type="ocr",
-            vector=chunk["embedding"],
-            point_id=chunk["point_id"],
-            metadata={
-                "doc_id": doc_id,
-                "chunk_index": chunk["chunk_index"],
-                "type": "cin"
-            }
-        )
-
-    print(f"[OK] {len(embeddings)} vecteurs OCR stockes")
+    if embeddings:
+        for chunk in embeddings:
+            store_reference_vector(
+                document_type=document_type,
+                vector_type="ocr",
+                vector=chunk["embedding"],
+                point_id=chunk.get("point_id", str(uuid.uuid4())),
+                metadata={
+                    "doc_id": doc_id,
+                    "chunk_index": chunk["chunk_index"],
+                    "document_type": document_type.lower()
+                }
+            )
+        print(f"[OK] {len(embeddings)} vecteurs OCR stockés")
+    else:
+        print("[ERREUR] Échec de génération des vecteurs OCR")
 
 
 # =========================
 # VÉRIFICATION
 # =========================
-def verify_mode(auto_store: bool = False):
-    doc_input = input("\nChemin du document (image ou PDF): ").strip()
+def verify_mode(document_type: str, auto_store: bool = False):
+    doc_input = input(
+        f"\nChemin du document {document_type} (image ou PDF): "
+    ).strip()
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     docs_dir = os.path.join(script_dir, "docs")
     os.makedirs(docs_dir, exist_ok=True)
 
-    # Résolution chemin
+    # -------- Résolution chemin --------
     if not os.path.exists(doc_input):
         doc_input = os.path.join(docs_dir, doc_input)
         if not os.path.exists(doc_input):
@@ -122,21 +161,26 @@ def verify_mode(auto_store: bool = False):
             poppler_path=POPPLER_PATH
         )
         for i, img in enumerate(images):
-            p = os.path.join(docs_dir, f"{filename}_page_{i+1}.png")
-            img.save(p)
-            pages.append(p)
+            page_path = os.path.join(
+                docs_dir, f"{filename}_page_{i + 1}.png"
+            )
+            img.save(page_path)
+            pages.append(page_path)
     else:
         pages.append(stored_path)
 
     # -------- Vérification --------
     best_result = None
+    best_page = None
 
     for page in pages:
         print(f"\nAnalyse: {page}")
-        result = verify_document(page, DOCUMENT_TYPE)
+        result = verify_document(page, document_type)
 
-        print(f"CLIP: {result['clip_similarity']:.4f}")
-        print(f"OCR : {result['ocr_similarity']:.4f}")
+        print(f"CLIP: {result['clip_similarity']:.4f} "
+              f"(Seuil: {result['clip_threshold']})")
+        print(f"OCR : {result['ocr_similarity']:.4f} "
+              f"(Seuil: {result['ocr_threshold']})")
 
         if not best_result or result["ocr_similarity"] > best_result["ocr_similarity"]:
             best_result = result
@@ -148,14 +192,13 @@ def verify_mode(auto_store: bool = False):
     print("=" * 60)
 
     if best_result and best_result["is_valid"]:
-        print("[OK] DOCUMENT RECONNU COMME CIN")
+        print(f"[OK] DOCUMENT RECONNU COMME {document_type}")
 
-        #AUTO-STOCKAGE SI MODE 3
         if auto_store:
-            print("[INFO] Stockage automatique des vecteurs (CIN reconnu)")
-            store_reference_mode(best_page)
+            print("[INFO] Stockage automatique des vecteurs")
+            store_reference_mode(best_page, document_type)
     else:
-        print("[KO] DOCUMENT NON CIN / NON RECONNU")
+        print(f"[KO] DOCUMENT NON {document_type} / NON RECONNU")
 
     print("=" * 60)
 
@@ -163,8 +206,3 @@ def verify_mode(auto_store: bool = False):
 # =========================
 if __name__ == "__main__":
     main()
-
-#si le doc est un cin il le stocke, sinon il le rejète et donc j'ai une base de vecteurs de reference 
-#pour les documents valides
-#je dois trouver une solution pour qu"il ne charge pas le model plusieurs fois ( safetensors et special_token_map etc )( mettre en cache par exemple)
-#je dois aussi trouver une solution pour creer un .env et separer les variables de la config des modèles 

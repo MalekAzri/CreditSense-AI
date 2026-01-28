@@ -59,6 +59,22 @@ def ensure_collections_exist(document_type: str):
                 print(f"Erreur création collection {coll_name}: {r_create.text}")
 
 # =========================
+# Supprimer collection
+# =========================
+def delete_collection(collection_name: str):
+    base_url = get_qdrant_base_url()
+    headers = get_headers()
+    url = f"{base_url}/collections/{collection_name}"
+    
+    r = requests.delete(url, headers=headers)
+    if r.status_code == 200:
+        print(f"Collection supprimée: {collection_name}")
+    elif r.status_code == 404:
+        print(f"Collection non existante: {collection_name}")
+    else:
+        print(f"Erreur suppression collection {collection_name}: {r.text}")
+
+# =========================
 # Stocker vecteur
 # =========================
 def store_reference_vector(
@@ -137,9 +153,12 @@ def verify_document(image_path: str, document_type: str = "CIN") -> Dict:
 
         # 1. Vérification CLIP
         print("Génération du vecteur CLIP...")
+        print(f"DEBUG: Using collection: {config['clip_collection']}")
+        print(f"DEBUG: Qdrant URL: {get_qdrant_base_url()}")
         clip_vector = generate_clip_vector(image_path)
         if clip_vector is not None:
             points = query_qdrant(config["clip_collection"], clip_vector, limit=1)
+            print(f"DEBUG: CLIP query returned {len(points)} points")
             if points:
                 match = points[0]
                 result["clip_similarity"] = match.get("score", 0)

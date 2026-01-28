@@ -1,8 +1,11 @@
 import os
 from dotenv import load_dotenv
 
-# Charger le fichier .env
-load_dotenv()
+# Charger le fichier .env depuis la racine du projet
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(script_dir, "..", ".."))
+env_path = os.path.join(project_root, ".env")
+load_dotenv(env_path)
 
 # ========== QDRANT ==========
 QDRANT_USE_CLOUD = os.getenv("QDRANT_USE_CLOUD", "False").lower() == "true"
@@ -32,6 +35,12 @@ QDRANT_COLLECTIONS = {
         "ocr_collection": "passport_ocr_vectors",
         "vector_size_clip": 512,
         "vector_size_ocr": 384,
+    },
+    "BTS_LOAN_APP": {
+        "clip_collection": "bts_loan_app_clip_vectors",
+        "ocr_collection": "bts_loan_app_ocr_vectors",
+        "vector_size_clip": 512,
+        "vector_size_ocr": 384,
     }
 }
 
@@ -39,6 +48,7 @@ QDRANT_COLLECTIONS = {
 SIMILARITY_THRESHOLDS = {
     "CIN": {"clip_threshold": 0.60, "ocr_threshold": 0.60},
     "PASSPORT": {"clip_threshold": 0.80, "ocr_threshold": 0.70},
+    "BTS_LOAN_APP": {"clip_threshold": 0.70, "ocr_threshold": 0.70},
 }
 
 # ========== OCR ==========
@@ -47,7 +57,7 @@ TESSERACT_LANG = 'ara'
 OCR_UPSCALE_FACTOR = 3
 
 # ========== Types supportés ==========
-SUPPORTED_DOCUMENT_TYPES = ["CIN", "PASSPORT"]
+SUPPORTED_DOCUMENT_TYPES = ["CIN", "PASSPORT", "BTS_LOAN_APP"]
 
 # ========== Fonctions utilitaires ==========
 def get_collection_config(document_type: str):

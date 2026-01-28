@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id                  Int       @id @default(autoincrement())
+  typeClient          String    // individu or pme
+  nom                 String?
+  prenom              String?
+  compte_courant      String?
+  duree_mois          Int?
+  historique_credit   String?
+  objectif_credit     String?
+  montant_credit      Float?
+  epargne             Float?
+  emploi              String?
+  emploi_depuis       Int?
+  taux_remboursement  Float?
+  statut_personnel    String?
+  garants             String?
+  residence_depuis    Int?
+  patrimoine          Float?
+  age                 Int?
+  autres_credits      String?
+  logement            String?
+  nb_credits_banque   Int?
+  personnes_a_charge  Int?
+  telephone           String?
+  travailleur_etranger Boolean?
+  classe              String? // bon client / mauvais client
+  decision_ia         String? // donner / refuser
+  decision_analyste   String? // donner / refuser
+  difference_ia_analyste Boolean? // true if different
+
+  documents           Document[]
+  emails              Email[]
+  vocaux              Vocal[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Document {
+  id          Int      @id @default(autoincrement())
+  client      Client   @relation(fields: [clientId], references: [id])
+  clientId    Int
+  email       Email?   @relation(fields: [emailId], references: [id])
+  emailId     Int?
+  type        String   // CIN, passport, etc.
+  url         String   // path to file
+  ocrScore    Float?   // % OCR correction
+  clipScore   Float?   // % CLIP score
+  statut      String?  // valide, en_attente, rejete
+  commentaire String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model Email {
+  id        Int      @id @default(autoincrement())
+  client    Client   @relation(fields: [clientId], references: [id])
+  clientId  Int
+  subject   String
+  body      String
+  sentAt    DateTime @default(now())
+  status    String?
+  
+  attachments Document[]
+
+  // Nouveaux champs demandés
+  intention   String?
+  confiance   Float?
+  ton_estime  String?
+}
+
+model Vocal {
+  id        Int      @id @default(autoincrement())
+  client    Client   @relation(fields: [clientId], references: [id])
+  clientId  Int
+  url       String
+  type      String?
+  duration  Int?
+  createdAt DateTime @default(now())
+}
+
+model Analyst {
+  id        Int      @id @default(autoincrement())
+  nom       String
+  prenom    String
+  email     String   @unique
+  password  String   // Haché
+  role      String   @default("analyst") // analyst, admin, etc.
+  bank      String?  // Name of the bank (BIAT, BNA, etc.)
+  
+  // Real-time status logic
+  lastSeen  DateTime @default(now())
+
+  // Messaging relations
+  messagesSent     AnalystMessage[] @relation("SentMessages")
+  messagesReceived AnalystMessage[] @relation("ReceivedMessages")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AnalystMessage {
+  id          Int      @id @default(autoincrement())
+  content     String   @db.Text
+  sender      Analyst  @relation("SentMessages", fields: [senderId], references: [id])
+  senderId    Int
+  receiver    Analyst  @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId  Int
+  createdAt   DateTime @default(now())
+  read        Boolean  @default(false)
+}
