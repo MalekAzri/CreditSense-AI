@@ -9,6 +9,7 @@ datasource db {
 
 model Client {
   id                  Int       @id @default(autoincrement())
+  email               String?   @unique // Added for email matching
   typeClient          String    // individu or pme
   nom                 String?
   prenom              String?
@@ -43,6 +44,19 @@ model Client {
   
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  // Standard Documents Status (Links/Paths or null)
+  doc_identite        String? // Identité : CIN ou Passeport
+  doc_demande_credit  String? // Demande de crédit (Individuel)
+  doc_bulletin_bancaire String? // Bulletin bancaire : Justificatif de revenus/statut
+  doc_releves_bancaires String? // Relevés bancaires
+  doc_bilan           String? // Bilan
+  doc_facture_domicile String? // Domicile : facture eau/élec
+  doc_registre_commerce String? // PME
+  doc_matricule_fiscal String? // PME
+  doc_compte_resultat String? // PME
+  doc_demande_credit_pme String? // PME
+  doc_cin_dirigeant   String? // PME
 }
 
 model Document {
@@ -64,19 +78,28 @@ model Document {
 
 model Email {
   id        Int      @id @default(autoincrement())
-  client    Client   @relation(fields: [clientId], references: [id])
-  clientId  Int
+  client    Client?  @relation(fields: [clientId], references: [id]) // Optional for unmatched
+  clientId  Int?
+  
   subject   String
-  body      String
+  sender    String   // Added sender
+  body      String   @db.Text // Ensure enough space
   sentAt    DateTime @default(now())
-  status    String?
+  status    String?  // processed, unmatched, etc.
   
   attachments Document[]
 
-  // Nouveaux champs demandés
-  intention   String?
-  confiance   Float?
-  ton_estime  String?
+  // AI Analysis Fields
+  intention       String?
+  confiance       Float?
+  ton_urgence     Float?    @default(0)
+  ton_stress      Float?    @default(0)
+  ton_serieux     Float?    @default(0)
+  
+  extractedData   Json?     // Store structured data (amount, credit_type, etc.)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Vocal {

@@ -77,6 +77,7 @@ async function main() {
             typeClient: 'individu',
             nom: 'Trabelsi',
             prenom: 'Sami',
+            email: 'sami.trabelsi@email.com',
             compte_courant: '100020003000',
             duree_mois: 12,
             historique_credit: 'aucun crédit existant',
@@ -105,11 +106,23 @@ async function main() {
                 create: [
                     {
                         subject: 'Demande de prêt automobile - Trabelsi Sami',
+                        sender: 'sami.trabelsi@email.com',
                         body: 'Bonjour, je vous envoie ma CIN pour compléter ma demande de crédit pour ma nouvelle voiture. Merci de me tenir informé.',
                         status: 'received',
                         intention: 'envoi de documents',
                         confiance: 0.95,
-                        ton_estime: 'urgence_40, serieux_90',
+                        ton_urgence: 40,
+                        ton_stress: 10,
+                        ton_serieux: 90,
+                        extractedData: {
+                            "Clean Text": "Demande de prêt automobile",
+                            "Credit Type": "automobile",
+                            "Amount": "12000 TND",
+                            "Client Name": "Sami Trabelsi",
+                            "Phone": "21698765432",
+                            "CIN": "12345678",
+                            "Reference": "REF-AUTO-001"
+                        },
                         attachments: {
                             create: [
                                 {
@@ -130,6 +143,7 @@ async function main() {
             typeClient: 'individu',
             nom: 'Ben Mabrouk',
             prenom: 'Amira',
+            email: 'amira.mabrouk@email.com',
             compte_courant: '400050006000',
             duree_mois: 24,
             historique_credit: 'crédit en cours remboursé normalement',
@@ -158,11 +172,23 @@ async function main() {
                 create: [
                     {
                         subject: 'Envoi de Passport - Amira Ben Mabrouk',
+                        sender: 'amira.mabrouk@email.com',
                         body: 'Ci-joint mon passport pour la validation de mon dossier de crédit travaux. Cordialement.',
                         status: 'received',
                         intention: 'soumission de document officiel',
                         confiance: 0.98,
-                        ton_estime: 'urgence_60, serieux_95',
+                        ton_urgence: 60,
+                        ton_stress: 20,
+                        ton_serieux: 95,
+                        extractedData: {
+                            "Clean Text": "Envoi de Passport pour validation",
+                            "Credit Type": "travaux",
+                            "Amount": "25000 TND",
+                            "Client Name": "Amira Ben Mabrouk",
+                            "Phone": "21655667788",
+                            "CIN": "None",
+                            "Reference": "None"
+                        },
                         attachments: {
                             create: [
                                 {
@@ -183,6 +209,7 @@ async function main() {
             typeClient: 'pme',
             nom: 'Sousse Tech Solutions',
             prenom: 'Mohamed Ali',
+            email: 'contact@soussetech.com',
             compte_courant: '700080009000',
             duree_mois: 36,
             historique_credit: 'retards fréquents sur lignes de crédit',
@@ -211,11 +238,23 @@ async function main() {
                 create: [
                     {
                         subject: 'URGENT: Demande de crédit BTS - Sousse Tech',
+                        sender: 'contact@soussetech.com',
                         body: 'Nous avons besoin de ce crédit rapidement pour payer nos fournisseurs. Voici le formulaire rempli.',
                         status: 'received',
                         intention: 'demande urgente de fonds',
                         confiance: 0.65,
-                        ton_estime: 'urgence_95, serieux_70',
+                        ton_urgence: 95,
+                        ton_stress: 80,
+                        ton_serieux: 70,
+                        extractedData: {
+                            "Clean Text": "URGENT: Demande de crédit BTS",
+                            "Credit Type": "BTS",
+                            "Amount": "50000 TND",
+                            "Client Name": "Mohamed Ali",
+                            "Phone": "21622334455",
+                            "CIN": "None",
+                            "Reference": "BTS-Sousse-2026"
+                        },
                         attachments: {
                             create: [
                                 {
@@ -238,6 +277,39 @@ async function main() {
                         }
                     }
                 ]
+            }
+        },
+        {
+            typeClient: 'individu',
+            nom: 'Azri',
+            prenom: 'Malek',
+            email: 'malek.azri@insat.ucar.tn', // Requested test email
+            compte_courant: '123456789012',
+            duree_mois: 12,
+            historique_credit: 'nouveau client',
+            objectif_credit: 'consommation',
+            montant_credit: 5000,
+            epargne: 1000,
+            emploi: 'ingénieur',
+            emploi_depuis: 2,
+            taux_remboursement: 0.1,
+            statut_personnel: 'célibataire',
+            garants: 'aucun',
+            residence_depuis: 5,
+            patrimoine: 10000,
+            age: 25,
+            autres_credits: 'aucun',
+            logement: 'locataire',
+            nb_credits_banque: 0,
+            personnes_a_charge: 0,
+            telephone: '21655555555',
+            travailleur_etranger: false,
+            classe: 'bon client',
+            decision_ia: 'donner',
+            decision_analyste: 'donner',
+            difference_ia_analyste: false,
+            emails: {
+                create: [] // No emails initially
             }
         }
     ];

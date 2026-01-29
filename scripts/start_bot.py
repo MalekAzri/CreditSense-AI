@@ -1,29 +1,28 @@
 #!/usr/bin/env python3
-"""
-Credit Platform Bot 🤖
------------------------
-Ce script automatise le cycle complet :
-1. Récupération des emails (Gmail)
-2. Analyse intelligente (AI)
-3. Affichage des résultats en temps réel
 
-Lancez-le et laissez-le tourner en arrière-plan !
 """
+Credit Platform Bot 
+-----------------------
+1. Fetch emails from Gmail (Realtime)
+2. Analyze with AI (Stateless)
+3. Send to Next.js API (Local DB)
+"""
+
 import os
 import sys
 import time
 import logging
-from datetime import datetime
+import requests
+import json
 from dotenv import load_dotenv
-from pymongo import MongoClient
 
-# Ajouter le dossier parent au path pour importer app
+# Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.services.email_processor import EmailProcessor
-from scripts.gmail_fetch import fetch_and_send_emails
+from scripts.gmail_fetch import fetch_and_return_emails
 
-# Configuration du logging
+# Logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -33,95 +32,83 @@ logger = logging.getLogger("CreditBot")
 
 load_dotenv()
 
+API_URL = "http://localhost:3000/api/webhook/email"
+
 def main():
     print("\n" + "="*50)
-    print("🤖 CREDIT PLATFORM BOT - DÉMARRAGE...")
+    print(" CREDIT PLATFORM BOT - STARTING...")
     print("="*50 + "\n")
     
-    # 1. Connexion DB
-    mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-    db_name = os.getenv("DB_NAME", "creditapp")
-    
-    try:
-        client = MongoClient(mongo_uri)
-        db = client[db_name]
-        logger.info("✅ Connexion MongoDB établie.")
-    except Exception as e:
-        logger.error(f"❌ Erreur connexion MongoDB: {e}")
-        return
-
-    # 2. Initialisation IA (Pre-loading models)
-    logger.info("🧠 Chargement des modèles d'IA (peut prendre quelques secondes)...")
+    # 1. Init AI
+    logger.info(" Loading AI models...")
     try:
         processor = EmailProcessor()
-        logger.info("✅ Modèles IA chargés et prêts !")
+        logger.info(" AI Models loaded!")
     except Exception as e:
-        logger.error(f"❌ Erreur chargement IA: {e}")
+        logger.error(f" Error loading AI: {e}")
         return
 
-    print("\n🚀 LE BOT EST EN LIGNE ! En attente de nouveaux emails...\n")
-    print("Appuyez sur Ctrl+C pour arrêter.\n")
-
-    # 3. Boucle principale
+    print("\n BOT IS ONLINE! Polling Gmail...\n")
+    
     loop_count = 0
     try:
         while True:
             loop_count += 1
-            # A. Fetch Emails
-            try:
-                # On capture stdout pour éviter de polluer l'affichage si fetch_and_send_emails est bavard
-                # (Sauf s'il trouve des messages)
-                logger.info(f"cycle #{loop_count}: Vérification Gmail...")
-                
-                # Note: fetch_and_send_emails insère déjà dans Mongo avec status="raw"
-                fetch_and_send_emails(max_results=5)
-                
-            except Exception as e:
-                logger.error(f"⚠️ Erreur fetch: {e}")
+            if loop_count % 5 == 0:
+                print(f"-- Cycle {loop_count} --")
 
-            # B. Check for RAW emails in MongoDB
-            raw_emails = list(db.messages.find({"status": "raw"}))
-            
-            if raw_emails:
-                print(f"\n📨 {len(raw_emails)} NOUVEAU(X) EMAIL(S) DÉTECTÉ(S) !\n")
+            # 2. Fetch from Gmail
+            try:
+                # Fetch new emails (raw dicts)
+                emails = fetch_and_return_emails(max_results=5)
                 
-                for email in raw_emails:
-                    email_id = str(email["_id"])
-                    subject = email.get("subject", "Sans sujet")
-                    sender = email.get("sender", "Inconnu")
+                if emails:
+                    print(f"\n {len(emails)} NEW EMAIL(S) FOUND!\n")
                     
-                    print(f"   ▶ Analyse de : '{subject}' (De: {sender})")
-                    
-                    try:
-                        # Process
-                        result = processor.process_single_email(email_id)
+                    for email_data in emails:
+                        subject = email_data.get("subject", "No Subject")
+                        sender = email_data.get("sender", "Unknown")
                         
-                        # Afficher résultat
-                        if result.get("status") == "success":
+                        print(f"    Processing: '{subject}' (From: {sender})")
+                        
+                        try:
+                            # 3. Process (Stateless)
+                            result = processor.process_email_data(email_data)
+                            
+                            if result.get("status") == "skipped_sent":
+                                print(f"       Skipped (Sent by us)")
+                                continue
+                                
+                            # 4. Send to Next.js API
+                            # Merge result with original status for the API
+                            payload = result
+                            payload['status'] = 'processed' 
+                            
+                            # Log analysis result
                             data = result.get("extracted_data", {})
                             sim = result.get("similarity_results", {})
+                            print(f"       Analyzed: Intent={sim.get('top_intent')} Conf={sim.get('confidence')}")
                             
-                            print(f"      ✅ ANALYSE RÉUSSIE")
-                            print(f"      👤 Client : {data.get('client_info', {}).get('name') or 'Non détecté'}")
-                            print(f"      🆔 CIN    : {data.get('client_info', {}).get('cin') or 'Non détecté'}")
-                            print(f"      💰 Montant: {data.get('amount') or '?'} {data.get('currency') or ''}")
-                            print(f"      🏠 Type   : {data.get('credit_type') or 'Non détecté'}")
-                            print(f"      🎯 But    : {sim.get('top_intent')} ({sim.get('confidence')}%)")
-                            print("-" * 40)
-                            
-                        elif result.get("status") == "skipped_sent":
-                            print(f"      ⏭️ Email envoyé par nous (Ignoré)")
-                        else:
-                            print(f"      ⚠️ Échec analyse: {result.get('error')}")
-                            
-                    except Exception as e:
-                        logger.error(f"❌ Erreur processing {email_id}: {e}")
-            
-            # C. Wait
+                            # Send via HTTP
+                            try:
+                                resp = requests.post(API_URL, json=payload, timeout=10)
+                                if resp.status_code == 200:
+                                    print(f"       [SUCCESS] Sent to API: OK")
+                                else:
+                                    print(f"       [ERROR] API Error {resp.status_code}: {resp.text}")
+                            except Exception as api_err:
+                                print(f"       [ERROR] Failed to contact API: {api_err}")
+
+                        except Exception as proc_err:
+                            logger.error(f" Error processing email: {proc_err}")
+                
+            except Exception as e:
+                logger.error(f" Fetch Error: {e}")
+
             time.sleep(30)
             
     except KeyboardInterrupt:
-        print("\n🛑 Arrêt du bot. À bientôt !")
+        print("\n Stopping bot.")
 
 if __name__ == "__main__":
     main()

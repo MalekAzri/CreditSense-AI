@@ -11,14 +11,14 @@ from googleapiclient.errors import HttpError
 import email
 from email.mime.text import MIMEText
 from file_manager import file_manager
-from message_logger import message_logger
-from pymongo import MongoClient
-from dotenv import load_dotenv
+# from message_logger import message_logger
+# from pymongo import MongoClient
+# from dotenv import load_dotenv
 
-load_dotenv()
-client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017"))
-db = client[os.getenv("DB_NAME", "creditapp")]
-collection = db.messages
+# load_dotenv()
+# client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017"))
+# db = client[os.getenv("DB_NAME", "creditapp")]
+# collection = db.messages
 
 # Configuration
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
@@ -109,11 +109,11 @@ def get_header_value(headers, name):
     return None
 
 
-def fetch_and_send_emails(max_results=10):
-    """Récupère les emails depuis Gmail et les envoie à l'API FastAPI."""
+
+def fetch_and_return_emails(max_results=10):
+    """Fetches emails from Gmail and returns them as a list of dicts."""
     start_time = time.time()
-    success_count = 0
-    error_count = 0
+    fetched_emails = []
     
     try:
         service = authenticate_gmail()
@@ -129,107 +129,68 @@ def fetch_and_send_emails(max_results=10):
         
         if not messages:
             print("Aucun message trouvé.")
-            message_logger.log_fetch_start('gmail', count=0)
-            message_logger.log_fetch_complete('gmail', 0, 0)
-            return
+            return []
         
         print(f"Nombre de messages trouvés: {len(messages)}")
-        message_logger.log_fetch_start('gmail', count=len(messages))
         
         for msg_info in messages:
-            # Récupérer les détails complets du message
-            msg = service.users().messages().get(
-                userId='me', 
-                id=msg_info['id'],
-                format='full'
-            ).execute()
-            
-            headers = msg['payload']['headers']
-            
-            # Extraire les informations principales
-            sender = get_header_value(headers, 'From')
-            subject = get_header_value(headers, 'Subject')
-            date = get_header_value(headers, 'Date')
-            
-            # Extraire le corps du message
-            body = extract_email_body(msg['payload'])
-            
-            # Gérer les pièces jointes
-            attachments = []
-            if 'parts' in msg['payload']:
-                for part in msg['payload']['parts']:
-                    if part['filename'] and 'attachmentId' in part['body']:
-                        filename = part['filename']
-                        attachment_id = part['body']['attachmentId']
-                        
-                        # Télécharger la pièce jointe
-                        file_path = download_attachment(
-                            service, 'me', msg_info['id'], 
-                            attachment_id, filename
-                        )
-                        if file_path:
-                            attachments.append(file_path)
-            
-            # Préparer le JSON pour l'API
-            message_json = {
-                "source": "gmail",
-                "sender": sender,
-                "client_id": None,  # À déterminer selon votre logique métier
-                "timestamp": date or datetime.now().isoformat(),
-                "subject": subject,
-                "content_text": body,
-                "attachments": attachments,
-                "metadata": {
-                    "message_id": msg_info['id'],
-                    "thread_id": msg.get('threadId'),
-                    "labels": msg.get('labelIds', [])
-                },
-                "status": "raw"
-            }
-            
-            # Insérer directement dans MongoDB (Bypass API Instable)
             try:
-                # Vérifier si l'email existe déjà (par message_id)
-                exists = collection.find_one({"metadata.message_id": msg_info['id']})
-                if exists:
-                    print(f"[SKIP] Message déjà présent: {subject}")
-                    continue
+                # Récupérer les détails complets du message
+                msg = service.users().messages().get(
+                    userId='me', 
+                    id=msg_info['id'],
+                    format='full'
+                ).execute()
                 
-                result = collection.insert_one(message_json)
-                msg_id = str(result.inserted_id)
+                headers = msg['payload']['headers']
                 
-                print(f"[OK] Message inséré directement dans Mongo: {subject} (ID: {msg_id})")
+                # Extraire les informations principales
+                sender = get_header_value(headers, 'From')
+                subject = get_header_value(headers, 'Subject')
+                date = get_header_value(headers, 'Date')
                 
-                # Message inséré avec succès
-                success_count += 1
+                # Extraire le corps du message
+                body = extract_email_body(msg['payload'])
                 
-            except requests.exceptions.RequestException as e:
-                print(f"[ERROR] Erreur lors de l'envoi à l'API: {e}")
-                if hasattr(e.response, 'text'):
-                    print(f"   Détails: {e.response.text}")
+                # Gérer les pièces jointes
+                attachments = []
+                # (Attachment logic kept for future enablement, but path might need adjustment if running from root)
                 
-                # Logger l'erreur
-                message_logger.log_message(
-                    source='gmail',
-                    sender=sender,
-                    status='error',
-                    attachments_count=len(attachments),
-                    subject=subject,
-                    error_msg=str(e)
-                )
-                error_count += 1
+                # Préparer le JSON
+                message_json = {
+                    "source": "gmail",
+                    "sender": sender,
+                    "timestamp": date or datetime.now().isoformat(),
+                    "subject": subject,
+                    "content_text": body,
+                    "attachments": attachments,
+                    "metadata": {
+                        "message_id": msg_info['id'],
+                        "thread_id": msg.get('threadId'),
+                        "labels": msg.get('labelIds', [])
+                    },
+                    "status": "raw"
+                }
+                
+                fetched_emails.append(message_json)
+                
+            except Exception as e:
+                print(f"[ERROR] processing message {msg_info.get('id')}: {e}")
+                continue
     
     except HttpError as error:
         print(f"Une erreur s'est produite avec l'API Gmail: {error}")
-        message_logger.log_error('gmail', 'gmail_api_error', str(error))
     
     finally:
-        # Logger la fin du fetch
         total_time = time.time() - start_time
-        message_logger.log_fetch_complete('gmail', success_count, error_count, total_time)
+        # Logging removed/simplified
+        pass
+        
+    return fetched_emails
 
 
 if __name__ == "__main__":
     print("[INFO] Starting fetch...")
-    fetch_and_send_emails(max_results=10)
-    print("[SUCCESS] Process complete.")
+    res = fetch_and_return_emails(max_results=5)
+    print(f"[SUCCESS] Got {len(res)} emails")
+

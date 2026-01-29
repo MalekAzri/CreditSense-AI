@@ -4,7 +4,7 @@ import re
 import logging
 from bs4 import BeautifulSoup
 import spacy
-from pymongo import MongoClient
+# from pymongo import MongoClient
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 import statistics
@@ -34,8 +34,9 @@ class EmailProcessor:
         self.user_email = os.getenv("USER_EMAIL", "")
 
         # 2. Initialize Clients
-        self.mongo_client = MongoClient(self.mongo_uri)
-        self.db = self.mongo_client[self.db_name]
+        # 2. Initialize Clients
+        # self.mongo_client = MongoClient(self.mongo_uri)
+        # self.db = self.mongo_client[self.db_name]
         
         if self.qdrant_url and self.qdrant_api_key:
             self.qdrant = QdrantClient(url=self.qdrant_url, api_key=self.qdrant_api_key)
@@ -53,102 +54,68 @@ class EmailProcessor:
         self.embedder = SentenceTransformer(self.model_name)
         logging.info("Models loaded.")
 
-    def process_single_email(self, email_id: str) -> dict:
+    def process_email_data(self, email_data: dict) -> dict:
+        """
+        Processes a raw email dictionary (from Gmail/API) directly without MongoDB.
+        """
+        email_id = email_data.get("metadata", {}).get("message_id", "unknown")
         logging.info(f"[START] Processing email {email_id}...")
         
-        # 1. Fetch Email
-        from bson import ObjectId
-        try:
-            doc = self.db.messages.find_one({"_id": ObjectId(email_id)})
-        except:
-            doc = self.db.messages.find_one({"_id": email_id})
-            
-        if not doc:
-            logging.error(f"Email {email_id} not found.")
-            return {"error": "not found"}
+        subject = email_data.get("subject")
+        body = email_data.get("content_text")
+        sender = email_data.get("sender", "")
 
         # 2. Clean Text
-        clean_text = self._advanced_clean(doc.get("subject"), doc.get("content_text") or doc.get("body"))
+        clean_text = self._advanced_clean(subject, body)
         
-        # 3. Extract NLP Data (Optional but good for 'processed' status)
+        # 3. Extract NLP Data
         extracted_data = self._extract_key_info(clean_text)
         
-        # Update Mongo with Clean Data
-        self.db.messages.update_one(
-            {"_id": doc["_id"]},
-            {"$set": {
-                "clean_text": clean_text,
-                "extracted_data": extracted_data,
-                "status": "processed",
-                "processed_at": datetime.now()
-            }}
-        )
-
         # 4. Check Direction (Sent vs Received)
-        sender = doc.get("sender", "")
         if self._is_sent_email(sender):
             logging.info(f"[SKIP] Email {email_id} is SENT. Stopping pipeline.")
-            self.db.messages.update_one(
-                {"_id": doc["_id"]},
-                {"$set": {"vectorized": True, "vectorization_status": "skipped_sent"}}
-            )
             return {"status": "skipped_sent"}
 
         # 5. Vectorize
         vector = self.embedder.encode(clean_text).tolist()
         
-        # Update Mongo (Vectorized)
-        self.db.messages.update_one(
-            {"_id": doc["_id"]},
-            {"$set": {
-                "vectorized": True, 
-                "vectorized_at": datetime.now()
-            }}
-        )
-        
         # Upsert to Qdrant (Optional for received emails, good for history)
-        # We skip upserting to 'email_vectors' for simplicity in this realtime flow unless specifically requested, 
-        # but the plan said to upsert. Let's do it if easy.
-        # Requires PointStruct.
         try:
             from qdrant_client.models import PointStruct
             import uuid
-            point_id = str(uuid.uuid4())
-            self.qdrant.upsert(
-                collection_name=self.vector_collection,
-                points=[PointStruct(
-                    id=point_id,
-                    vector=vector,
-                    payload={
-                        "mongo_id": str(doc["_id"]),
-                        "subject": doc.get("subject"),
-                        "clean_text_preview": clean_text[:200],
-                        "direction": "received"
-                    }
-                )]
-            )
+            
+            if self.qdrant:
+                point_id = str(uuid.uuid4())
+                self.qdrant.upsert(
+                    collection_name=self.vector_collection,
+                    points=[PointStruct(
+                        id=point_id,
+                        vector=vector,
+                        payload={
+                            "message_id": email_id,
+                            "subject": subject,
+                            "clean_text_preview": clean_text[:200],
+                            "direction": "received"
+                        }
+                    )]
+                )
         except Exception as e:
             logging.warning(f"Failed to upsert to Qdrant history: {e}")
 
         # 6. Similarity Search
         sim_results = self._analyze_similarity(vector)
         
-        # 7. Update Mongo (Final)
-        self.db.messages.update_one(
-            {"_id": doc["_id"]},
-            {"$set": {
-                "similarity_results": sim_results,
-                "analysis_completed_at": datetime.now()
-            }}
-        )
-        
         logging.info(f"[SUCCESS] Email {email_id} fully processed. Intent: {sim_results.get('top_intent')}")
+        
+        # Return structured result
         return {
             "status": "success", 
             "sender": sender,
+            "subject": subject,
+            "content_text": body,
             "clean_text": clean_text,
             "extracted_data": extracted_data,
-            "similarity": sim_results
+            "similarity_results": sim_results
         }
 
     def _advanced_clean(self, subject, body):
@@ -400,7 +367,14 @@ class EmailProcessor:
         return self.user_email.lower() in sender.lower() if sender else False
 
     def _analyze_similarity(self, vector):
-        if not self.qdrant: return {}
+        if not self.qdrant:
+            # TEMPORARY DUMMY RESULTS if Qdrant is missing
+            return {
+                "top_intent": "None",
+                "confidence": 0.0,
+                "tone_estimation": {"urgency": 0, "stress": 0, "seriousness": 0},
+                "matched_examples": []
+            }
         
         try:
             search_result = self.qdrant.query_points(
@@ -446,3 +420,4 @@ class EmailProcessor:
             "tone_estimation": avg_tone,
             "matched_examples": [p.id for p in search_result]
         }
+

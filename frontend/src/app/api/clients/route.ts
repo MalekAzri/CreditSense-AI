@@ -31,6 +31,7 @@ export async function GET() {
                 id: `LN-2026-${client.id.toString().padStart(3, "0")}`,
                 dbId: client.id,
                 applicant: `${client.prenom || ""} ${client.nom || ""}`.trim(),
+                email: client.email || "-",
                 clientType: client.typeClient === "individu" ? "Individu" : "PME",
                 class: client.classe === "bon client" ? "Bon" : "Mauvais", // Mapping vers les badges du dashboard
                 iaScore: iaScore,
@@ -76,6 +77,7 @@ export async function POST(req: Request) {
         const objectif_credit = formData.get("objectif_credit") as string;
         const age = parseInt(formData.get("age") as string || "0");
         const emploi = formData.get("emploi") as string;
+        const email = formData.get("email") as string;
 
         // Create the client
         const client = await prisma.client.create({
@@ -88,6 +90,7 @@ export async function POST(req: Request) {
                 objectif_credit,
                 age,
                 emploi,
+                email,
                 classe: "nouveau", // Default
                 decision_ia: "en_attente",
                 decision_analyste: "en_attente",

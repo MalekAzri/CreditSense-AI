@@ -1,7 +1,0 @@
---- SIMILARITY DISTRIBUTION (Total: 24) ---
-
-📊 INFO_REQUEST: 24 emails (100.0%)
-   - Python resources for you!
-   - Welcome to MongoDB Atlas. Let's get started.
-   - Alerte de sécurité
-

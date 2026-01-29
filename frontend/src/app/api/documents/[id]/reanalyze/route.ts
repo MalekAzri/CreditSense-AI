@@ -42,12 +42,19 @@ export async function POST(
 
             // Execute python command with stderr suppression for warnings
             const command = `python "${scriptPath}" --path "${documentPath.replace(/\\/g, "/")}" --type "${document.type}"`;
+
+            console.log(`[Reanalyze] Starting verification for document ${documentId} (${document.type})`);
+            const startTime = Date.now();
+
             const output = execSync(command, {
-                timeout: 60000,
+                timeout: 300000, // Increased to 5 minutes to handle long AI processing
                 encoding: 'utf-8',
                 // Suppress stderr to avoid warnings mixing with JSON output
                 stdio: ['pipe', 'pipe', 'ignore']
             }).toString().trim();
+
+            const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+            console.log(`[Reanalyze] Verification completed in ${duration}s for document ${documentId}`);
 
             // Extract JSON from output (in case there are any print statements before it)
             let jsonOutput = output;
@@ -83,7 +90,12 @@ export async function POST(
                 }, { status: 500 });
             }
         } catch (aiError: any) {
-            console.error(`AI Verification failed for doc ${documentId}:`, aiError);
+            console.error(`[Reanalyze] AI Verification failed for doc ${documentId}:`, {
+                error: aiError.message,
+                stderr: aiError.stderr?.toString(),
+                stdout: aiError.stdout?.toString(),
+                code: aiError.code
+            });
             return NextResponse.json({
                 success: false,
                 error: aiError.message || "AI verification failed"

@@ -27,10 +27,13 @@ import {
     Mic,
     Play,
     Pause,
-    History
+    History,
+    Sparkles,
+    Send as SendIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import EmailReplyModal from "@/components/dashboard/EmailReplyModal";
 
 export default function ClientDetailsPage() {
     const { id } = useParams();
@@ -367,6 +370,15 @@ function CommunicationsTab({ analysis, loan }: { analysis: any; loan: any }) {
     const emails = loan.emails || [];
     const vocals = loan.vocaux || [];
     const [selectedEmail, setSelectedEmail] = useState<any>(null);
+    const [replyModal, setReplyModal] = useState<{
+        isOpen: boolean;
+        email: any;
+        mode: 'auto' | 'manual';
+    }>({
+        isOpen: false,
+        email: null,
+        mode: 'manual'
+    });
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 relative">
@@ -398,26 +410,54 @@ function CommunicationsTab({ analysis, loan }: { analysis: any; loan: any }) {
                                 <div className="bg-white/[0.03] rounded-2xl p-6 border border-white/5 min-h-[200px] mb-8">
                                     <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{selectedEmail.body}</p>
                                 </div>
+                                {selectedEmail.extractedData && (
+                                    <div className="space-y-4">
+                                        <h4 className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Données Extraites par IA</h4>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {Object.entries(selectedEmail.extractedData).map(([key, value]: [string, any]) => (
+                                                value && (
+                                                    <div key={key} className="bg-white/5 p-3 rounded-xl border border-white/5">
+                                                        <span className="text-[9px] text-slate-500 uppercase block mb-1">{key}</span>
+                                                        <span className="text-xs font-medium text-indigo-300">
+                                                            {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                                        </span>
+                                                    </div>
+                                                )
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
-                                <div className="grid grid-cols-3 gap-4 p-4 bg-indigo-500/5 rounded-2xl border border-indigo-500/10">
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 uppercase font-black mb-1">Intention</span>
-                                        <span className="text-xs font-bold text-white">{selectedEmail.intention || "N/A"}</span>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 uppercase font-black mb-1">Ton Estimé</span>
-                                        <span className="text-xs font-bold text-indigo-300">{selectedEmail.ton_estime || "N/A"}</span>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] text-slate-500 uppercase font-black mb-1">Fiabilité IA</span>
-                                        <span className="text-xs font-bold text-emerald-400">{Math.round(selectedEmail.confiance || 0)}%</span>
-                                    </div>
+                                <div className="flex gap-4 pt-6 border-t border-white/5">
+                                    <Button
+                                        variant="primary"
+                                        className="flex-1 bg-indigo-600 hover:bg-indigo-500 gap-2 font-bold"
+                                        onClick={() => setReplyModal({ isOpen: true, email: selectedEmail, mode: 'auto' })}
+                                    >
+                                        <Sparkles className="w-4 h-4" /> Réponse IA
+                                    </Button>
+                                    <Button
+                                        variant="secondary"
+                                        className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 gap-2 font-bold text-white"
+                                        onClick={() => setReplyModal({ isOpen: true, email: selectedEmail, mode: 'manual' })}
+                                    >
+                                        <SendIcon className="w-4 h-4" /> Manuelle
+                                    </Button>
                                 </div>
                             </GlassCard>
                         </motion.div>
                     </div>
                 )}
             </AnimatePresence>
+
+            {replyModal.isOpen && (
+                <EmailReplyModal
+                    email={replyModal.email}
+                    client={loan}
+                    mode={replyModal.mode}
+                    onClose={() => setReplyModal({ ...replyModal, isOpen: false })}
+                />
+            )}
 
             {/* Emails Section */}
             <div className="space-y-6">
@@ -448,10 +488,6 @@ function CommunicationsTab({ analysis, loan }: { analysis: any; loan: any }) {
                                                 email.intention === "Stress" ? "text-amber-400" :
                                                     email.intention === "Doute" ? "text-red-400" : "text-slate-300"
                                         )}>{email.intention || "N/A"}</span>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-[9px] text-slate-500 uppercase font-black tracking-tighter">Ton Estimé</span>
-                                        <span className="text-xs text-indigo-300 font-bold">{email.ton_estime || "Analysé"}</span>
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-[9px] text-slate-500 uppercase font-black tracking-tighter">Confiance IA</span>
@@ -527,7 +563,7 @@ function CommunicationsTab({ analysis, loan }: { analysis: any; loan: any }) {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
@@ -536,6 +572,7 @@ function DetailsTab({ loan }: { loan: any }) {
 
     const profileData = [
         { label: "Type de Client", value: isIndiv ? "Individu / Particulier" : "PME / Entreprise" },
+        { label: "Email", value: loan.email || "-" },
         { label: "Compte courant", value: loan.compte_courant || "-" },
         { label: "Montant crédit", value: `${(loan.montant_credit || 0).toLocaleString()} TND` },
         { label: "Durée crédit", value: `${loan.duree_mois || 0} mois` },

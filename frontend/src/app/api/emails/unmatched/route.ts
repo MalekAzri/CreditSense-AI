@@ -3,22 +3,26 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
-export async function POST() {
+export async function GET() {
     try {
         const session = await getServerSession(authOptions);
 
-        if (!session?.user?.email) {
+        if (!session?.user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        console.log(`[Heartbeat] Updating lastSeen for: ${session.user.email}`);
-        await prisma.analyst.update({
-            where: { email: session.user.email },
-            data: { lastSeen: new Date() },
+
+        const unmatchedEmails = await prisma.email.findMany({
+            where: {
+                clientId: { equals: null }
+            },
+            orderBy: {
+                sentAt: "desc"
+            }
         });
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json(unmatchedEmails);
     } catch (error) {
-        console.error("Heartbeat error:", error);
+        console.error("Error fetching unmatched emails:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

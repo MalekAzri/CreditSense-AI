@@ -25,6 +25,7 @@ export function AddClientModal({ onClose, onSuccess }: AddClientModalProps) {
         objectif_credit: "",
         emploi: "",
         age: "",
+        email: "",
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -182,6 +183,17 @@ export function AddClientModal({ onClose, onSuccess }: AddClientModalProps) {
                                             onChange={handleInputChange}
                                             className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-indigo-500/50 outline-none transition-all"
                                             placeholder="Ex: Achat de matériel agricole"
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs text-slate-400 ml-1">Email</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-indigo-500/50 outline-none transition-all"
+                                            placeholder="Ex: client@email.com"
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">

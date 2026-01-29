@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from pymongo import MongoClient
@@ -10,8 +11,21 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Service Import
 from app.services.email_processor import EmailProcessor
+from app.services.reply_generator import ReplyGenerator
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = FastAPI(title="Credit Platform – Module 4 & 6")
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # MongoDB
 client = MongoClient(os.getenv("MONGO_URI"))
@@ -25,6 +39,14 @@ try:
 except Exception as e:
     print(f"[ERROR] Failed to init EmailProcessor: {e}")
     processor = None
+
+# Initialize Reply Generator
+try:
+    reply_gen = ReplyGenerator()
+    print("[SUCCESS] ReplyGenerator initialized.")
+except Exception as e:
+    print(f"[ERROR] Failed to init ReplyGenerator: {e}")
+    reply_gen = None
 
 # Modèle Pydantic
 from app.models import Message
@@ -43,6 +65,49 @@ def create_message(msg: Message, background_tasks: BackgroundTasks):
     #     print("[ERROR] Processor is None!")
         
     return {"message": "Message reçu et traitement démarré", "id": msg_id}
+
+class ReplyRequest(BaseModel):
+    email_text: str
+    client_data: Optional[dict] = None
+
+class SendReplyRequest(BaseModel):
+    to_email: str
+    subject: str
+    body: str
+
+@app.post("/messages/generate-reply")
+def generate_reply(req: ReplyRequest):
+    """Génère une suggestion de réponse avec l'IA."""
+    if not reply_gen:
+        raise HTTPException(status_code=500, detail="Reply generator not initialized")
+    
+    suggestion = reply_gen.generate_auto_reply(req.email_text, req.client_data)
+    return {"suggestion": suggestion}
+
+@app.post("/messages/send-reply")
+def send_reply(req: SendReplyRequest):
+    """Envoie une réponse par email via SMTP."""
+    email_addr = os.getenv("SMTP_EMAIL", "banque.2026@gmail.com")
+    email_pass = os.getenv("SMTP_PASSWORD", "banqueHackathon2026")
+    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+    smtp_port = int(os.getenv("SMTP_PORT", "465"))
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = email_addr
+        msg['To'] = req.to_email
+        msg['Subject'] = req.subject
+        
+        msg.attach(MIMEText(req.body, 'plain', 'utf-8'))
+        
+        with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
+            server.login(email_addr, email_pass)
+            server.send_message(msg)
+            
+        return {"status": "success", "message": f"Email envoyé à {req.to_email}"}
+    except Exception as e:
+        print(f"[SMTP ERROR] {e}")
+        raise HTTPException(status_code=500, detail=f"Erreur d'envoi SMTP: {str(e)}")
 
 @app.get("/messages/")
 def get_messages(source: str = None, status: str = None, limit: int = 100):
