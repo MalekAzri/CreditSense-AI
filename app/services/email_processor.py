@@ -10,6 +10,7 @@ from sentence_transformers import SentenceTransformer
 import statistics
 from collections import Counter
 from datetime import datetime
+from typing import Optional, List, Dict
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,8 +26,8 @@ class EmailProcessor:
         # 1. Load Config
         self.mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017")
         self.db_name = os.getenv("DB_NAME", "creditapp")
-        self.qdrant_url = os.getenv("QDRANT_URL")
-        self.qdrant_api_key = os.getenv("QDRANT_API_KEY")
+        self.qdrant_emails_url = os.getenv("QDRANT_EMAILS_URL")
+        self.qdrant_emails_key = os.getenv("QDRANT_EMAILS_API_KEY")
         self.qdrant_collection = "synthetic_emails"
         self.vector_collection = "email_vectors"
         self.model_name = "paraphrase-multilingual-MiniLM-L12-v2"
@@ -38,10 +39,10 @@ class EmailProcessor:
         # self.mongo_client = MongoClient(self.mongo_uri)
         # self.db = self.mongo_client[self.db_name]
         
-        if self.qdrant_url and self.qdrant_api_key:
-            self.qdrant = QdrantClient(url=self.qdrant_url, api_key=self.qdrant_api_key)
+        if self.qdrant_emails_url and self.qdrant_emails_key:
+            self.qdrant = QdrantClient(url=self.qdrant_emails_url, api_key=self.qdrant_emails_key)
         else:
-            logging.error("Qdrant credentials missing!")
+            logging.error("Qdrant EMAILS credentials missing!")
             self.qdrant = None
 
         # 3. Load Models
@@ -53,6 +54,13 @@ class EmailProcessor:
             
         self.embedder = SentenceTransformer(self.model_name)
         logging.info("Models loaded.")
+        
+        # 4. Reply Generator
+        try:
+            from app.services.reply_generator import ReplyGenerator
+            self.reply_gen = ReplyGenerator()
+        except:
+            self.reply_gen = None
 
     def process_email_data(self, email_data: dict) -> dict:
         """
@@ -105,6 +113,19 @@ class EmailProcessor:
         # 6. Similarity Search
         sim_results = self._analyze_similarity(vector)
         
+        # 7. Lexicon Refinement (Boost scores based on keywords)
+        if "tone_estimation" in sim_results:
+            sim_results["tone_estimation"] = self._refine_tone_lexicon(
+                sim_results["tone_estimation"], 
+                clean_text
+            )
+            
+        # 8. Find Client and Generate Auto-Reply
+        client_data = self._find_client_in_db(extracted_data, email_data)
+        auto_reply = None
+        if self.reply_gen:
+            auto_reply = self.reply_gen.generate_auto_reply(clean_text, client_data)
+        
         logging.info(f"[SUCCESS] Email {email_id} fully processed. Intent: {sim_results.get('top_intent')}")
         
         # Return structured result
@@ -115,8 +136,39 @@ class EmailProcessor:
             "content_text": body,
             "clean_text": clean_text,
             "extracted_data": extracted_data,
-            "similarity_results": sim_results
+            "similarity_results": sim_results,
+            "auto_reply": auto_reply,
+            "metadata": email_data.get("metadata", {})
         }
+
+    def _find_client_in_db(self, extracted_data: dict, email_data: dict) -> Optional[dict]:
+        """
+        Calls the Next.js API to find the client by email or CIN.
+        """
+        import requests
+        
+        url = "http://localhost:3000/api/webhook/client-lookup"
+        
+        # Try searching by email (from sender and extracted info)
+        email = extracted_data.get("client_info", {}).get("email")
+        if not email:
+            # Parse sender address
+            sender = email_data.get("sender", "")
+            match = re.search(r'\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b', sender)
+            if match:
+                email = match.group(0)
+                
+        cin = extracted_data.get("client_info", {}).get("cin")
+        
+        try:
+            payload = {"email": email, "cin": cin}
+            resp = requests.post(url, json=payload, timeout=5)
+            if resp.status_code == 200:
+                return resp.json()
+        except Exception as e:
+            logging.warning(f"Failed to lookup client: {e}")
+            
+        return None
 
     def _advanced_clean(self, subject, body):
         full_text = f"{subject or ''} . {body or ''}"
@@ -413,6 +465,12 @@ class EmailProcessor:
             "stress": round(statistics.mean(tone_scores["stress"]), 2) if tone_scores["stress"] else 0,
             "seriousness": round(statistics.mean(tone_scores["seriousness"]), 2) if tone_scores["seriousness"] else 0
         }
+
+        # Refine with lexicon (Lexicon-based adjustment to boost specific scores)
+        # Using vector generation context (raw input wasn't passed here, but we can reconstruct it or use search metadata)
+        # Actually, let's pass the raw text to this method or refine at a higher level.
+        # But for consistency, let's just make it possible to refine if text is available.
+        # Re-analyzing where vector comes from: it's from clean_text in process_email_data.
         
         return {
             "top_intent": top_intent, 
@@ -420,4 +478,35 @@ class EmailProcessor:
             "tone_estimation": avg_tone,
             "matched_examples": [p.id for p in search_result]
         }
+
+    def _refine_tone_lexicon(self, base_tone: dict, text: str) -> dict:
+        """
+        Applies a boost to tone scores based on specific keywords.
+        """
+        refined = base_tone.copy()
+        text_lower = text.lower()
+
+        # 1. Urgency Boosters
+        urgency_keywords = ["urgent", "immédiat", "rapidement", "vite", "asap", "bloqué", "plus vite possible", "depuis des mois", "retard"]
+        if any(k in text_lower for k in urgency_keywords) or "!" in text:
+            refined["urgency"] = min(1.0, refined["urgency"] + 0.3)
+            # Extra boost for caps/multiple bangs
+            if "!!" in text or any(k.upper() in text for k in ["URGENT", "IMMEDIAT"]):
+                refined["urgency"] = min(1.0, refined["urgency"] + 0.2)
+        
+        # 2. Stress Boosters
+        stress_keywords = ["stressé", "inquiet", "peur", "n'en peux plus", "difficulté", "problème", "panique", "catastrophe", "aider", "help"]
+        if any(k in text_lower for k in stress_keywords):
+            refined["stress"] = min(1.0, refined["stress"] + 0.3)
+            
+        # 3. Seriousness Boosters
+        formal_keywords = ["veuillez", "monsieur", "madame", "cordialement", "dossier", "référence", "procédure", "formel", "loi", "contrat"]
+        if any(k in text_lower for k in formal_keywords):
+            refined["seriousness"] = min(1.0, refined["seriousness"] + 0.15)
+            
+        # Round final results
+        for k in refined:
+            refined[k] = round(refined[k], 2)
+            
+        return refined
 

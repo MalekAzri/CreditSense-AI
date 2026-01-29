@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import EmailReplyModal from "./EmailReplyModal";
+import LinkClientModal from "./LinkClientModal";
 
 export function UnmatchedEmailsView() {
     const [emails, setEmails] = useState<any[]>([]);
@@ -34,6 +35,7 @@ export function UnmatchedEmailsView() {
         email: null,
         mode: 'manual'
     });
+    const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
 
     useEffect(() => {
         fetchUnmatched();
@@ -117,18 +119,20 @@ export function UnmatchedEmailsView() {
                                 )}>
                                     <div className="flex justify-between items-start mb-2">
                                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate max-w-[150px]">
-                                            {email.sender}
+                                            {email.extractedData?.client_info?.name || email.sender}
                                         </span>
                                         <span className="text-[10px] text-slate-500 whitespace-nowrap">
                                             {new Date(email.sentAt).toLocaleDateString()}
                                         </span>
                                     </div>
                                     <h4 className="text-sm font-semibold text-white mb-2 line-clamp-1">{email.subject}</h4>
-                                    {email.intention && (
-                                        <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[9px] py-0 px-2 rounded-md font-bold uppercase">
-                                            {email.intention}
-                                        </span>
-                                    )}
+                                    <div className="flex flex-wrap gap-1.5 mt-2">
+                                        {email.intention && (
+                                            <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[9px] py-0 px-2 rounded-md font-bold uppercase">
+                                                {email.intention}
+                                            </span>
+                                        )}
+                                    </div>
                                     {email.ton_urgence > 70 && (
                                         <span className="bg-red-500/10 text-red-400 border border-red-500/20 text-[9px] py-0 px-2 rounded-md font-bold uppercase">
                                             Urgent
@@ -158,7 +162,9 @@ export function UnmatchedEmailsView() {
                                                 Reçu le {new Date(selectedEmail.sentAt).toLocaleString()}
                                             </div>
                                             <h3 className="text-xl font-bold text-white mb-1">{selectedEmail.subject}</h3>
-                                            <p className="text-indigo-400 text-sm font-medium">{selectedEmail.sender}</p>
+                                            <p className="text-indigo-400 text-sm font-medium">
+                                                {selectedEmail.extractedData?.client_info?.name || selectedEmail.sender}
+                                            </p>
                                         </div>
                                         <div className="flex flex-col items-end gap-2">
                                             <div className="flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full">
@@ -174,20 +180,77 @@ export function UnmatchedEmailsView() {
                                         </p>
                                     </div>
 
+                                    {/* AI Analysis Sections */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                        {/* Intent & Confidence */}
+                                        <div>
+                                            <h4 className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-4">Qualification IA</h4>
+                                            <div className="grid grid-cols-1 gap-3">
+                                                <div className="bg-indigo-500/5 p-3 rounded-xl border border-indigo-500/10">
+                                                    <span className="text-[9px] text-slate-500 uppercase block mb-1">Intention</span>
+                                                    <span className="text-xs font-bold text-white uppercase tracking-wider">
+                                                        {selectedEmail.intention || "N/A"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Tone Analysis */}
+                                        <div>
+                                            <h4 className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-4">Analyse de Ton</h4>
+                                            <div className="grid grid-cols-3 gap-2 text-center">
+                                                <div className="bg-orange-500/5 p-2 rounded-xl border border-orange-500/10">
+                                                    <span className="text-[8px] text-slate-500 uppercase block">Urgence</span>
+                                                    <span className="text-[10px] font-black text-orange-400">
+                                                        {selectedEmail.ton_urgence || 0}
+                                                    </span>
+                                                </div>
+                                                <div className="bg-red-500/5 p-2 rounded-xl border border-red-500/10">
+                                                    <span className="text-[8px] text-slate-500 uppercase block">Stress</span>
+                                                    <span className="text-[10px] font-black text-red-400">
+                                                        {selectedEmail.ton_stress || 0}
+                                                    </span>
+                                                </div>
+                                                <div className="bg-blue-500/5 p-2 rounded-xl border border-blue-500/10">
+                                                    <span className="text-[8px] text-slate-500 uppercase block">Sérieux</span>
+                                                    <span className="text-[10px] font-black text-blue-400">
+                                                        {selectedEmail.ton_serieux || 0}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {selectedEmail.extractedData && (
-                                        <div className="mb-8">
-                                            <h4 className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-4">Analyse de l'IA</h4>
+                                        <div className="mb-8 p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
+                                            <h4 className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-4">Données Métiers Extraites</h4>
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                                {Object.entries(selectedEmail.extractedData).map(([key, value]: [string, any]) => (
-                                                    value && value !== "None" && (
+                                                {Object.entries(selectedEmail.extractedData).flatMap(([key, value]: [string, any]) => {
+                                                    if (!value || value === "None") return [];
+
+                                                    // Special handling for client_info to avoid JSON display
+                                                    if (key === 'client_info' && typeof value === 'object') {
+                                                        return Object.entries(value)
+                                                            .filter(([_, subValue]) => subValue && subValue !== "None")
+                                                            .map(([subKey, subValue]) => (
+                                                                <div key={subKey} className="bg-white/5 p-3 rounded-xl border border-white/5">
+                                                                    <span className="text-[9px] text-slate-500 uppercase block mb-1">{subKey}</span>
+                                                                    <span className="text-xs font-medium text-emerald-300 truncate block">
+                                                                        {String(subValue)}
+                                                                    </span>
+                                                                </div>
+                                                            ));
+                                                    }
+
+                                                    return [(
                                                         <div key={key} className="bg-white/5 p-3 rounded-xl border border-white/5">
                                                             <span className="text-[9px] text-slate-500 uppercase block mb-1">{key}</span>
                                                             <span className="text-xs font-medium text-indigo-300 truncate block">
                                                                 {String(value)}
                                                             </span>
                                                         </div>
-                                                    )
-                                                ))}
+                                                    )];
+                                                })}
                                             </div>
                                         </div>
                                     )}
@@ -210,7 +273,7 @@ export function UnmatchedEmailsView() {
                                         <Button
                                             variant="secondary"
                                             className="flex-1 min-w-[140px] bg-slate-800 hover:bg-slate-700 border-slate-700 gap-2 text-white"
-                                            onClick={() => {/* TODO: Open Link Modal */ }}
+                                            onClick={() => setIsLinkModalOpen(true)}
                                         >
                                             <LinkIcon className="w-4 h-4" /> Lier au Client
                                         </Button>
@@ -239,6 +302,19 @@ export function UnmatchedEmailsView() {
                     onClose={() => setReplyModal({ ...replyModal, isOpen: false })}
                 />
             )}
+
+            <AnimatePresence>
+                {isLinkModalOpen && selectedEmail && (
+                    <LinkClientModal
+                        email={selectedEmail}
+                        onClose={() => setIsLinkModalOpen(false)}
+                        onSuccess={() => {
+                            setSelectedEmail(null);
+                            fetchUnmatched();
+                        }}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }

@@ -11,10 +11,29 @@ export async function POST(req: Request) {
             content_text,
             extracted_data,
             similarity_results,
-            status
+            auto_reply,
+            status,
+            metadata
         } = body;
 
-        console.log(`[Webhook] Received email from: ${sender} - Subject: ${subject}`);
+        const messageId = metadata?.message_id;
+
+        console.log(`[Webhook] Received email from: ${sender} - Subject: ${subject} - MsgID: ${messageId}`);
+
+        // 0. Check for duplicates
+        if (messageId) {
+            const existing = await prisma.email.findUnique({
+                where: { messageId }
+            });
+            if (existing) {
+                console.log(`[Webhook] Email ${messageId} already exists. Skipping.`);
+                return NextResponse.json({
+                    success: true,
+                    message: "Email already exists",
+                    emailId: existing.id
+                });
+            }
+        }
 
         // 1. Try to find client by email
         // Extract email from "Name <email@example.com>" format if needed
@@ -43,6 +62,7 @@ export async function POST(req: Request) {
 
                 // Link to client if found (clientId is optional now)
                 clientId: client?.id || null, // Explicitly null if not found
+                messageId: messageId,
 
                 // AI Analysis
                 intention: similarity_results?.top_intent,
@@ -52,6 +72,8 @@ export async function POST(req: Request) {
                 ton_urgence: toneData.urgency || 0,
                 ton_stress: toneData.stress || 0,
                 ton_serieux: toneData.seriousness || 0,
+
+                suggestion_reply: auto_reply,
 
                 // Structured Data
                 extractedData: extracted_data || {}

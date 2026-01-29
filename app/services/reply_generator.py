@@ -29,23 +29,31 @@ class ReplyGenerator:
         intent = self.model.predict([email_text])[0]
         
         # 2. Get Base Template
-        base_reply = self.responses_template.get(intent, self.responses_template.get("other"))
+        base_reply = self.responses_template.get(intent, self.responses_template.get("other", "Bonjour, merci pour votre message."))
 
         # 3. Personalize if client data is available
         if client_data:
             name = client_data.get('nom', 'Client')
-            type_client = client_data.get('typeClient', 'individu') # individu or pme
+            type_client = client_data.get('typeClient', 'individu') 
+            statut = client_data.get('statut_dossier', 'en attente')
             
-            # Logic for missing documents
             missing_docs = self._get_missing_documents(client_data, type_client)
             
-            if intent == "document_request" or (intent == "status_request" and missing_docs):
+            # If intent is status_request or document_request
+            if intent in ["status_request", "document_request"]:
                 personalization = f"Bonjour {name},\n\n"
+                
+                if intent == "status_request":
+                    personalization += f"Concernant l'état de votre dossier, il est actuellement : **{statut}**.\n\n"
+                
                 if missing_docs:
                     docs_list = "\n- ".join(missing_docs)
                     personalization += f"Pour faire avancer l'étude de votre crédit, il nous manque encore les documents suivants :\n- {docs_list}\n\nMerci de nous les envoyer par retour d'email."
                 else:
-                    personalization += "Bonne nouvelle : votre dossier est complet ! Nous n'attendons plus aucune pièce de votre part."
+                    if intent == "document_request":
+                        personalization += "Bonne nouvelle : votre dossier est complet ! Nous n'attendons plus aucune pièce de votre part."
+                    else: # status_request and no missing docs
+                        personalization += "Votre dossier est complet et en cours de traitement final par nos équipes."
                 
                 personalization += "\n\nCordialement,\nL'équipe CreditSense."
                 return personalization

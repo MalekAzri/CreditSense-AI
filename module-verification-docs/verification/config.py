@@ -11,8 +11,8 @@ load_dotenv(env_path)
 QDRANT_USE_CLOUD = os.getenv("QDRANT_USE_CLOUD", "False").lower() == "true"
 QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
-QDRANT_CLOUD_URL = os.getenv("QDRANT_CLOUD_URL", "")
-QDRANT_CLOUD_API_KEY = os.getenv("QDRANT_CLOUD_API_KEY", "")
+QDRANT_CLOUD_URL = os.getenv("QDRANT_DOCS_URL", "")
+QDRANT_CLOUD_API_KEY = os.getenv("QDRANT_DOCS_API_KEY", "")
 
 # ========== HuggingFace ==========
 HF_CACHE_DIR = os.getenv("HF_CACHE_DIR", r"D:\CreditSense Ai\huggingface_cache")

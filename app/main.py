@@ -5,6 +5,9 @@ from typing import List, Optional
 from pymongo import MongoClient
 import os
 import sys
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Ajouter le dossier ".." au path pour s'assurer que app est accessible si lancé depuis root
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -12,6 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 # Service Import
 from app.services.email_processor import EmailProcessor
 from app.services.reply_generator import ReplyGenerator
+from app.services.credit_scorer import CreditScorer
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -47,6 +51,14 @@ try:
 except Exception as e:
     print(f"[ERROR] Failed to init ReplyGenerator: {e}")
     reply_gen = None
+
+# Initialize Credit Scorer (Module 6)
+try:
+    credit_scorer = CreditScorer()
+    print("[SUCCESS] CreditScorer initialized.")
+except Exception as e:
+    print(f"[ERROR] Failed to init CreditScorer: {e}")
+    credit_scorer = None
 
 # Modèle Pydantic
 from app.models import Message
@@ -143,6 +155,23 @@ async def whatsapp_webhook(request: Request, background_tasks: BackgroundTasks):
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/clients/analyze")
+async def analyze_client_credit(req: dict):
+    """
+    Effectue une analyse de crédit ML sur les données fournies.
+    """
+    if not credit_scorer:
+        raise HTTPException(status_code=500, detail="Credit scorer not initialized")
+
+    try:
+        # On utilise les données envoyées directement par le frontend
+        analysis_result = credit_scorer.analyze_client(req)
+        return analysis_result
+
+    except Exception as e:
+        print(f"[ANALYSIS ERROR] {e}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
 @app.get("/webhook/whatsapp")
 async def whatsapp_webhook_verify(request: Request):

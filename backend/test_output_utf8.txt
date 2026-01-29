@@ -1,0 +1,78 @@
+﻿2026-01-29 19:21:23,862 - INFO - HTTP Request: GET https://867a3b2a-7bce-4009-b75a-e88c73969ba1.europe-west3-0.gcp.cloud.qdrant.io:6333 "HTTP/1.1 200 OK"
+2026-01-29 19:21:23,881 - INFO - Loading models...
+2026-01-29 19:21:28,354 - INFO - Use pytorch device_name: cpu
+2026-01-29 19:21:28,354 - INFO - Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+2026-01-29 19:21:32,362 - INFO - Models loaded.
+2026-01-29 19:21:32,362 - INFO - [START] Processing email test_msg_999...
+python.exe : 
+Au caractère Ligne:1 
+: 1
++ & C:/Python313/pyth
+on.exe 
+"d:/CreditSense Ai/ba
+ckend/test_email_flow
+. ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (:String   
+ ) [], RemoteExce    
+ption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+Batches:   0%|       
+   | 0/1 [00:00<?, 
+?it/s]
+Batches: 
+100%|##########| 1/1 
+[00:00<00:00,  
+7.34it/s]
+Batches: 
+100%|##########| 1/1 
+[00:00<00:00,  
+7.32it/s]
+2026-01-29 19:21:32,680 - INFO - HTTP Request: PUT https://867a3b2a-7bce-4009-b75a-e88c73969ba1.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/email_vectors/points?wait=true "HTTP/1.1 200 OK"
+2026-01-29 19:21:32,742 - INFO - HTTP Request: POST https://867a3b2a-7bce-4009-b75a-e88c73969ba1.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/synthetic_emails/points/query "HTTP/1.1 200 OK"
+2026-01-29 19:21:32,743 - INFO - [SUCCESS] Email test_msg_999 fully processed. Intent: CREDIT_REQUEST
+DEBUG: results type is <class 'dict'>
+
+==================================================
+TEST RESULT (REAL-TIME)
+==================================================
+Subject   : Demande de renseignement - Inconnu
+Sender    : amira.mabrouk@email.com
+Status    : success
+
+EXTRACTED DATA (PHASE 1 & 2):
+  Clean Text: N/A...
+  Credit Type: immobilier
+Traceback (most 
+recent call last):
+  File 
+"d:\CreditSense Ai\ba
+ckend\test_email_flow
+.py", line 87, in 
+<module>
+    test_email_flow()
+    ~~~~~~~~~~~~~~~^^
+  File 
+"d:\CreditSense Ai\ba
+ckend\test_email_flow
+.py", line 54, in 
+test_email_flow
+    print(f"  
+Amount: {amount_data.
+get('amount', 
+'None')} {amount_data
+.get('currency', 
+'None')}")
+                     
+  ^^^^^^^^^^^^^^^
+AttributeError: 
+'float' object has 
+no attribute 'get'

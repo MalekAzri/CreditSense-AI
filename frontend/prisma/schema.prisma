@@ -32,6 +32,7 @@ model Client {
   nb_credits_banque   Int?
   personnes_a_charge  Int?
   telephone           String?
+  cin                 String?   @unique // 8-digit CIN
   travailleur_etranger Boolean?
   classe              String? // bon client / mauvais client
   decision_ia         String? // donner / refuser
@@ -41,6 +42,8 @@ model Client {
   documents           Document[]
   emails              Email[]
   vocaux              Vocal[]
+  
+  statut_dossier      String?   @default("en attente") // accepté, refusé, en attente
   
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -78,6 +81,7 @@ model Document {
 
 model Email {
   id        Int      @id @default(autoincrement())
+  messageId String?  @unique // Gmail Message ID for deduping
   client    Client?  @relation(fields: [clientId], references: [id]) // Optional for unmatched
   clientId  Int?
   
@@ -96,6 +100,7 @@ model Email {
   ton_stress      Float?    @default(0)
   ton_serieux     Float?    @default(0)
   
+  suggestion_reply String?   @db.Text
   extractedData   Json?     // Store structured data (amount, credit_type, etc.)
 
   createdAt DateTime @default(now())

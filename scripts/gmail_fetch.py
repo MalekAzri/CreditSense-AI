@@ -1,4 +1,12 @@
 import os
+import sys
+import io
+
+# Force UTF-8 for Windows Console
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 import base64
 import requests
 import time
@@ -21,7 +29,7 @@ from file_manager import file_manager
 # collection = db.messages
 
 # Configuration
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 API_URL = "http://127.0.0.1:8000/messages/"
 
 
@@ -41,21 +49,27 @@ def authenticate_gmail():
     # Si les credentials n'existent pas ou sont invalides, demander à l'utilisateur de se connecter
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
+            print("[AUTH] Refreshing expired token...")
             creds.refresh(Request())
         else:
+            print("[AUTH] No valid token found. Starting OAuth flow...")
             if not os.path.exists(credentials_path):
                 raise FileNotFoundError(f"Le fichier '{credentials_path}' est introuvable. Veuillez le placer dans le dossier scripts/.")
             
             flow = InstalledAppFlow.from_client_secrets_file(
                 credentials_path, SCOPES)
             # On utilise le port 8090 pour éviter les conflits
-            creds = flow.run_local_server(port=8090)
+            # access_type='offline' et prompt='consent' garantissent l'obtention d'un refresh_token
+            print("[AUTH] Opening browser for authentication on port 8090...")
+            print("[AUTH] If the browser doesn't open, check for a popup or use the link below.")
+            creds = flow.run_local_server(port=8090, access_type='offline', prompt='consent')
         
         # Sauvegarder les credentials pour la prochaine exécution
+        print(f"[AUTH] Saving new token to {token_path}")
         with open(token_path, 'w') as token:
             token.write(creds.to_json())
     
-    return build('gmail', 'v1', credentials=creds)
+    return build('gmail', 'v1', credentials=creds, static_discovery=False)
 
 
 def download_attachment(service, user_id, msg_id, attachment_id, filename):
@@ -118,11 +132,11 @@ def fetch_and_return_emails(max_results=10):
     try:
         service = authenticate_gmail()
         
-        # Récupérer la liste des messages
+        # Récupérer la liste des messages (uniquement les non-lus dans l'Innox)
         results = service.users().messages().list(
             userId='me', 
             maxResults=max_results,
-            labelIds=['INBOX']
+            q='label:INBOX is:unread'
         ).execute()
         
         messages = results.get('messages', [])
@@ -140,6 +154,15 @@ def fetch_and_return_emails(max_results=10):
                     userId='me', 
                     id=msg_info['id'],
                     format='full'
+                ).execute()
+                
+                # Marquer comme lu (supprimer le label UNREAD)
+                service.users().messages().batchModify(
+                    userId='me',
+                    body={
+                        'ids': [msg_info['id']],
+                        'removeLabelIds': ['UNREAD']
+                    }
                 ).execute()
                 
                 headers = msg['payload']['headers']

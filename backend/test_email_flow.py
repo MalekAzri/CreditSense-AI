@@ -14,34 +14,60 @@ def test_email_flow():
     
     # 2. Define Mock Email
     mock_email = {
-        "subject": "Demande de renseignement - Inconnu",
-        "sender": "John Doe <john.doe@unknown.com>",
+        "subject": "Suivi de dossier - Crédit Amira Mabrouk",
+        "sender": "amira.mabrouk@email.com",
         "content_text": """
         Bonjour,
         
-        Je m'appelle Malek Azri (CIN: 09876543). 
-        Je souhaiterais faire une demande de crédit immobilier pour un montant de 150000 DT.
-        Je suis assez stressé car j'ai besoin d'une réponse rapide.
+        Je reviens vers vous concernant ma demande de crédit déposée la semaine dernière.
+        Serait-il possible de connaître l'état d'avancement de mon dossier ? 
+        
+        Référence du dossier : REF-2026-AMIRA
+        
+        Merci d'avance pour votre aide.
         
         Cordialement,
-        Malek
+        Amira Mabrouk
         """,
         "metadata": {
-            "message_id": "test_msg_999"
+            "message_id": "test_msg_status_request"
         }
     }
     
-    print("\n--- [1] Processing Email via AI Backend ---")
     results = processor.process_email_data(mock_email)
-    
-    if results["status"] != "success":
-        print(f"Error processing: {results}")
+
+    if not results or results.get("status") != "success":
+        print(f"❌ CRITICAL ERROR: AI Processing failed: {results}")
         return
 
-    print(f"Found Intent: {results['similarity_results']['top_intent']}")
-    print(f"Confidence: {results['similarity_results']['confidence']}")
-    print(f"Extraction: {results['extracted_data']}")
+    print("\n" + "="*50)
+    print("TEST RESULT (REAL-TIME)")
+    print("="*50)
+    print(f"Subject   : {results.get('subject')}")
+    print(f"Sender    : {results.get('sender')}")
+    print(f"Status    : {results.get('status', 'processed')}")
     
+    extracted = results.get('extracted_data', {})
+    client_info = extracted.get('client_info', {})
+
+    print("\nEXTRACTED DATA (PHASE 1 & 2):")
+    print(f"  Clean Text: {results.get('clean_text', 'N/A')[:50]}...")
+    print(f"  Credit Type: {extracted.get('credit_type', 'None')}")
+    print(f"  Amount: {extracted.get('amount', 'None')} {extracted.get('currency', 'None')}")
+    print(f"  Client Name: {client_info.get('name', 'None')}")
+    print(f"  Phone: {client_info.get('phone', 'None')}")
+    print(f"  CIN: {client_info.get('cin', 'None')}")
+    print(f"  Reference: {extracted.get('reference', 'None')}")
+    
+    sim = results.get('similarity_results', {})
+    tone = sim.get('tone_estimation', {})
+    
+    print("\nAI ANALYSIS:")
+    print(f"  Intent     : {sim.get('top_intent', 'UNKNOWN')}")
+    print(f"  Confidence : {sim.get('confidence', 0.0)}")
+    print(f"  Tone       : Urgency={tone.get('urgency', 0)}, Stress={tone.get('stress', 0)}, Seriousness={tone.get('seriousness', 0)}")
+    print("="*50)
+
     # 3. Send to Webhook
     print("\n--- [2] Sending Results to Frontend Webhook ---")
     webhook_url = "http://localhost:3000/api/webhook/email"

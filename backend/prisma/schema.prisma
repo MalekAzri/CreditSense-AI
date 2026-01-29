@@ -78,6 +78,7 @@ model Document {
 
 model Email {
   id        Int      @id @default(autoincrement())
+  messageId String?  @unique // Gmail Message ID for deduping
   client    Client?  @relation(fields: [clientId], references: [id]) // Optional for unmatched
   clientId  Int?
   

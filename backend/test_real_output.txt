@@ -1,0 +1,36 @@
+﻿2026-01-29 19:28:49,432 - INFO - HTTP Request: GET https://867a3b2a-7bce-4009-b75a-e88c73969ba1.europe-west3-0.gcp.cloud.qdrant.io:6333 "HTTP/1.1 200 OK"
+2026-01-29 19:28:49,444 - INFO - Loading models...
+2026-01-29 19:28:54,239 - INFO - Use pytorch device_name: cpu
+2026-01-29 19:28:54,239 - INFO - Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+2026-01-29 19:28:58,101 - INFO - Models loaded.
+2026-01-29 19:28:58,101 - INFO - [START] Processing email test_msg_999...
+2026-01-29 19:28:58,396 - INFO - HTTP Request: PUT https://867a3b2a-7bce-4009-b75a-e88c73969ba1.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/email_vectors/points?wait=true "HTTP/1.1 200 OK"
+2026-01-29 19:28:58,452 - INFO - HTTP Request: POST https://867a3b2a-7bce-4009-b75a-e88c73969ba1.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/synthetic_emails/points/query "HTTP/1.1 200 OK"
+2026-01-29 19:28:58,454 - INFO - [SUCCESS] Email test_msg_999 fully processed. Intent: CREDIT_REQUEST
+
+==================================================
+TEST RESULT (REAL-TIME)
+==================================================
+Subject   : Demande de renseignement
+Sender    : amira.mabrouk@email.com
+Status    : success
+
+EXTRACTED DATA (PHASE 1 & 2):
+  Clean Text: Demande de renseignement. Bonjour, Je m'appelle Am...
+  Credit Type: immobilier
+  Amount: 150000.0 DT
+  Client Name: None
+  Phone: None
+  CIN: None
+  Reference: None
+
+AI ANALYSIS:
+  Intent     : CREDIT_REQUEST
+  Confidence : 1.0
+  Tone       : Urgency=0.48, Stress=0.26, Seriousness=0.86
+==================================================
+
+--- [2] Sending Results to Frontend Webhook ---
+Webhook Status: 200
+Webhook Response: {'success': True, 'message': 'Email processed and saved', 'emailId': 15, 'linkedClientId': 7}
+SUCCESS: Linked to Client ID 7
