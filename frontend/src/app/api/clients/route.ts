@@ -43,8 +43,8 @@ export async function GET(req: Request) {
         // Transformer les données pour correspondre aux attentes du dashboard si nécessaire
         const formattedClients = clients.map((client: any) => {
             // Calculer le risque IA (moyenne des scores CLIP/OCR des documents si non spécifié)
-            // Pour l'instant on utilise un score factice basé sur la décision IA si le score n'est pas explicite
-            const iaScore = client.decision_ia === "donner" ? 15 : 85;
+            // Si pas encore de décision IA, le score est 0 (en attente) logic
+            const iaScore = client.decision_ia === "donner" ? 15 : (client.decision_ia === "refuser" ? 85 : 0);
 
             return {
                 id: `LN-2026-${client.id.toString().padStart(3, "0")}`,
@@ -54,9 +54,9 @@ export async function GET(req: Request) {
                 applicant: `${client.prenom || ""} ${client.nom || ""}`.trim(),
                 email: client.email || "-",
                 clientType: client.typeClient === "individu" ? "Individu" : "PME",
-                class: client.classe === "bon client" ? "Bon" : "Mauvais", // Mapping vers les badges du dashboard
+                class: client.classe === "bon client" ? "Bon" : (client.classe === "mauvais client" ? "Mauvais" : "N/A"), // Mapping vers les badges du dashboard
                 iaScore: iaScore,
-                iaRecommendation: client.decision_ia === "donner" ? "Oui" : "Non",
+                iaRecommendation: client.decision_ia === "donner" ? "Oui" : (client.decision_ia === "refuser" ? "Non" : "En attente"),
                 analystDecision: client.decision_analyste === "donner" ? "Oui" : client.decision_analyste === "refuser" ? "Non" : "En attente",
                 creditAmount: client.montant_credit || 0,
                 duration: client.duree_mois || 0,

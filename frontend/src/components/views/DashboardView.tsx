@@ -13,7 +13,8 @@ import {
     AlertCircle,
     Paperclip,
     ArrowRight,
-    TrendingUp
+    TrendingUp,
+    HelpCircle
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -35,10 +36,13 @@ export function DashboardView() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [view, setView] = useState<"clients" | "unmatched">("clients");
 
-    const fetchClients = async () => {
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const fetchClients = async (query = "") => {
         setLoading(true);
         try {
-            const res = await fetch("/api/clients");
+            const url = query ? `/api/clients?search=${encodeURIComponent(query)}` : "/api/clients";
+            const res = await fetch(url);
             const data = await res.json();
             if (Array.isArray(data)) {
                 setClients(data);
@@ -51,19 +55,25 @@ export function DashboardView() {
     };
 
     useEffect(() => {
-        fetchClients();
-    }, []);
+        const delayDebounceFn = setTimeout(() => {
+            fetchClients(searchTerm);
+        }, 300);
 
-    const getClassColor = (cls: string) => {
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm]);
+
+    const getClassColor = (cls: string | null) => {
+        if (!cls || cls === "N/A") return "text-slate-400 bg-slate-500/10 border-slate-500/20";
         switch (cls) {
             case "Bon": return "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
             case "Moyen": return "text-amber-400 bg-amber-500/10 border-amber-500/20";
             case "Mauvais": return "text-red-400 bg-red-500/10 border-red-500/20";
-            default: return "text-slate-400";
+            default: return "text-slate-400 bg-slate-500/10 border-slate-500/20";
         }
     };
 
     const getScoreColor = (score: number) => {
+        if (score === 0) return "bg-slate-700";
         if (score < 30) return "bg-emerald-500";
         if (score < 70) return "bg-amber-500";
         return "bg-red-500";
@@ -113,6 +123,8 @@ export function DashboardView() {
                             type="text"
                             placeholder="Rechercher un client..."
                             className="bg-slate-900/50 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-200 outline-none focus:border-indigo-500/50 transition-all w-72"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <Button variant="secondary" className="gap-2 border-slate-800 bg-slate-900/50">
@@ -199,7 +211,7 @@ export function DashboardView() {
                                                             </td>
                                                             <td className="px-4 py-4">
                                                                 <span className={cn("px-2 py-0.5 rounded-md text-[10px] font-bold border", getClassColor(loan.class))}>
-                                                                    {loan.class}
+                                                                    {loan.class || "N/A"}
                                                                 </span>
                                                             </td>
                                                             <td className="px-4 py-4">
@@ -213,8 +225,10 @@ export function DashboardView() {
                                                             <td className="px-4 py-4">
                                                                 {loan.iaRecommendation === "Oui" ? (
                                                                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                                                                ) : (
+                                                                ) : loan.iaRecommendation === "Non" ? (
                                                                     <XCircle className="w-4 h-4 text-red-500" />
+                                                                ) : (
+                                                                    <HelpCircle className="w-4 h-4 text-slate-600" />
                                                                 )}
                                                             </td>
                                                             <td className="px-4 py-4">

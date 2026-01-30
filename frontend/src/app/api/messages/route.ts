@@ -78,3 +78,35 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
+
+export async function PATCH(req: Request) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { senderId } = await req.json();
+        const currentUserId = parseInt(session.user.id);
+
+        if (!senderId) {
+            return NextResponse.json({ error: "Sender ID is required" }, { status: 400 });
+        }
+
+        await prisma.analystMessage.updateMany({
+            where: {
+                senderId: parseInt(senderId),
+                receiverId: currentUserId,
+                read: false
+            },
+            data: {
+                read: true
+            }
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Error marking messages as read:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}

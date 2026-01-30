@@ -35,6 +35,13 @@ export function ChatDialog({
                 const data = await res.json();
                 if (Array.isArray(data)) {
                     setMessages(data);
+
+                    // Mark messages as read
+                    await fetch("/api/messages", {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ senderId: analyst.id })
+                    });
                 }
             } catch (err) {
                 console.error("Error loading chat context:", err);

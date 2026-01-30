@@ -7,10 +7,32 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
 import { useAuth } from "../providers/AuthProvider";
 
+import { useState, useEffect } from "react";
+
 // We will use a mock logout function passed from props or context later
 export function Header({ isAuthenticated, onLogout }: { isAuthenticated: boolean; onLogout: () => void }) {
     const pathname = usePathname();
     const { user } = useAuth();
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            const fetchUnread = async () => {
+                try {
+                    const res = await fetch("/api/messages/unread");
+                    const data = await res.json();
+                    if (typeof data.count === 'number') setUnreadCount(data.count);
+                } catch (e) {
+                    console.error("Error fetching unread messages:", e);
+                }
+            };
+
+            fetchUnread();
+            // Poll every 10 seconds for real-time feel
+            const interval = setInterval(fetchUnread, 10000);
+            return () => clearInterval(interval);
+        }
+    }, [isAuthenticated]);
 
     if (!isAuthenticated) return null;
 
@@ -21,7 +43,7 @@ export function Header({ isAuthenticated, onLogout }: { isAuthenticated: boolean
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/5 px-8 h-20 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
                 <div className="bg-indigo-600/20 p-2 rounded-lg">
                     <ShieldCheck className="w-6 h-6 text-indigo-400" />
                 </div>
@@ -31,7 +53,7 @@ export function Header({ isAuthenticated, onLogout }: { isAuthenticated: boolean
                     </h1>
                     <p className="text-xs text-slate-500">Intelligent Risk Tracking</p>
                 </div>
-            </div>
+            </Link>
 
             <nav className="hidden md:flex items-center gap-1">
                 {navItems.map((item) => {
@@ -54,10 +76,16 @@ export function Header({ isAuthenticated, onLogout }: { isAuthenticated: boolean
             </nav>
 
             <div className="flex items-center gap-4">
-                <Button variant="ghost" size="sm" className="relative">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                </Button>
+                <Link href="/">
+                    <Button variant="ghost" size="sm" className="relative">
+                        <Bell className="w-5 h-5" />
+                        {unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center animate-pulse shadow-lg shadow-red-500/20">
+                                {unreadCount > 99 ? "99+" : unreadCount}
+                            </span>
+                        )}
+                    </Button>
+                </Link>
                 <div className="h-8 w-[1px] bg-white/10" />
                 <div className="flex items-center gap-3">
                     <div className="text-right hidden sm:block">

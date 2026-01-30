@@ -29,7 +29,7 @@ import {
     Pause,
     History,
     Sparkles,
-    Send as SendIcon,
+    Send,
     Loader2,
     LayoutDashboard,
     Layout
@@ -37,6 +37,31 @@ import {
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import EmailReplyModal from "@/components/dashboard/EmailReplyModal";
+
+// Mock data for static display
+const MOCK_VOCALS = [
+    {
+        fileName: "Vocal_Demande_Initial.mp3",
+        duration: "0:45",
+        date: "Hier à 14:20",
+        emotion: "Calme",
+        transcript: "Bonjour, je souhaiterais savoir où en est mon dossier de crédit pour l'achat de mon nouveau véhicule. Merci."
+    },
+    {
+        fileName: "Vocal_Pression_Identite.mp3",
+        duration: "0:30",
+        date: "Aujourd'hui à 11:45",
+        emotion: "Deception",
+        transcript: "Je vous jure que c'est mon frère sur la photo, il a juste un peu changé depuis 5 ans, c'est bien lui sur la CIN."
+    },
+    {
+        fileName: "Vocal_Justificatif_Manquant.mp3",
+        duration: "1:12",
+        date: "Aujourd'hui à 09:15",
+        emotion: "Stressé",
+        transcript: "Je n'arrive pas à uploader ma fiche de paie sur le portail, est-ce que je peux vous l'envoyer par WhatsApp directement ?"
+    }
+];
 
 export default function ClientDetailsPage() {
     const { id } = useParams();
@@ -52,6 +77,15 @@ export default function ClientDetailsPage() {
     const [selectedEmail, setSelectedEmail] = useState<any>(null);
     const [selectedDocument, setSelectedDocument] = useState<any>(null);
     const [openedFromAnalysis, setOpenedFromAnalysis] = useState(false);
+    const [replyModal, setReplyModal] = useState<{
+        isOpen: boolean;
+        email: any;
+        mode: 'auto' | 'manual';
+    }>({
+        isOpen: false,
+        email: null,
+        mode: 'manual'
+    });
 
     useEffect(() => {
         const fetchLoanDetails = async () => {
@@ -365,12 +399,22 @@ export default function ClientDetailsPage() {
                                         <Button
                                             variant="primary"
                                             className="flex-1 bg-indigo-600 hover:bg-indigo-500 gap-2 font-bold"
-                                            onClick={() => { /* Open reply modal logic would go here if extracted */ }}
+                                            onClick={() => {
+                                                setReplyModal({ isOpen: true, email: selectedEmail, mode: 'auto' });
+                                                setSelectedEmail(null);
+                                            }}
                                         >
                                             <Sparkles className="w-4 h-4" /> Réponse IA
                                         </Button>
-                                        <Button variant="secondary" className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 font-bold text-white">
-                                            Réponse Manuelle
+                                        <Button
+                                            variant="secondary"
+                                            className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 font-bold text-white gap-2"
+                                            onClick={() => {
+                                                setReplyModal({ isOpen: true, email: selectedEmail, mode: 'manual' });
+                                                setSelectedEmail(null);
+                                            }}
+                                        >
+                                            <Send className="w-4 h-4" /> Réponse Manuelle
                                         </Button>
                                     </div>
                                     {openedFromAnalysis && (
@@ -490,6 +534,15 @@ export default function ClientDetailsPage() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {replyModal.isOpen && (
+                <EmailReplyModal
+                    email={replyModal.email}
+                    client={loan}
+                    mode={replyModal.mode}
+                    onClose={() => setReplyModal({ ...replyModal, isOpen: false })}
+                />
+            )}
         </div>
     );
 }
@@ -507,8 +560,11 @@ function DocumentsTab({ loan, reanalyzingDocs, handleReanalyze }: { loan: any; r
         if (t.includes("cin") || t.includes("identite") || t.includes("passeport")) return "Identité";
         if (t.includes("bts") || t.includes("formulaire") || t.includes("demande")) return "Demande";
         if (t.includes("paie") || t.includes("salaire") || t.includes("financier") || t.includes("bilan")) return "Financier";
-        if (t.includes("domicile") || t.includes("facture") || t.includes("residence")) return "Domicile";
-        if (t.includes("dirigeant") || t.includes("statuts")) return loan.clientType === "PME" ? "Entreprise" : "Identité";
+        if (t.includes("domicile") || t.includes("facture") || t.includes("residence")) {
+            // For PME, invoices are financial documents, not residence proof
+            return (loan.typeClient === "pme" || loan.clientType === "PME") ? "Financier" : "Domicile";
+        }
+        if (t.includes("dirigeant") || t.includes("statuts")) return (loan.typeClient === "pme" || loan.clientType === "PME") ? "Entreprise" : "Identité";
         return "Demande"; // Default
     };
 
@@ -687,7 +743,26 @@ function CommunicationsTab({
     setOpenedFromAnalysis: (val: boolean) => void;
 }) {
     const emails = loan.emails || [];
-    const vocals = loan.vocaux || [];
+
+    // Mock data for static display
+    const MOCK_VOCALS = [
+        {
+            fileName: "Vocal_Demande_Initial.mp3",
+            duration: "0:45",
+            date: "Hier à 14:20",
+            emotion: "Calme",
+            transcript: "Bonjour, je souhaiterais savoir où en est mon dossier de crédit pour l'achat de mon nouveau véhicule. Merci."
+        },
+        {
+            fileName: "Vocal_Justificatif_Manquant.mp3",
+            duration: "1:12",
+            date: "Aujourd'hui à 09:15",
+            emotion: "Stressé",
+            transcript: "Je n'arrive pas à uploader ma fiche de paie sur le portail, est-ce que je peux vous l'envoyer par WhatsApp directement ?"
+        }
+    ];
+
+    const vocals = (loan.vocaux && loan.vocaux.length > 0) ? loan.vocaux : MOCK_VOCALS;
     const [replyModal, setReplyModal] = useState<{
         isOpen: boolean;
         email: any;
@@ -907,6 +982,18 @@ function AnalysisTab({ analysis, loan, loading, setSelectedEmail, setSelectedDoc
 }) {
     const isError = (analysis.decision || loan.decision_ia) === "NON" || analysis.decision === "REFUSÉ" || loan.decision_ia === "refuser";
 
+    // Logic for Fraud and Suspicious Content
+    const fraudulentDocs = (loan.documents || []).filter((doc: any) =>
+        (doc.ocrScore < 45 || doc.clipScore < 45) && doc.statut !== "valide"
+    );
+
+    const suspiciousEmails = (loan.emails || []).filter((email: any) =>
+        email.ton_serieux < 20 || email.ton_stress > 80
+    );
+
+    const vocalsToFilter = (loan.vocaux && loan.vocaux.length > 0) ? loan.vocaux : MOCK_VOCALS;
+    const suspiciousVocals = vocalsToFilter.filter((v: any) => v.emotion === "Deception");
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-20 gap-4">
@@ -915,15 +1002,6 @@ function AnalysisTab({ analysis, loan, loading, setSelectedEmail, setSelectedDoc
             </div>
         );
     }
-
-    // Logic for Fraud and Suspicious Emails
-    const fraudulentDocs = (loan.documents || []).filter((doc: any) =>
-        (doc.ocrScore < 45 || doc.clipScore < 45) && doc.statut !== "valide"
-    );
-
-    const suspiciousEmails = (loan.emails || []).filter((email: any) =>
-        email.ton_serieux < 20 || email.ton_stress > 80
-    );
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -1045,127 +1123,174 @@ function AnalysisTab({ analysis, loan, loading, setSelectedEmail, setSelectedDoc
             </div>
 
             {/* Evidence Section - Refined Layout */}
-            {(fraudulentDocs.length > 0 || suspiciousEmails.length > 0) && (
-                <div className="lg:col-span-3 mt-8 space-y-8">
-                    <div className="h-px bg-slate-800 w-full opacity-30" />
+            {
+                (fraudulentDocs.length > 0 || suspiciousEmails.length > 0 || suspiciousVocals.length > 0) && (
+                    <div className="lg:col-span-3 mt-8 space-y-8">
+                        <div className="h-px bg-slate-800 w-full opacity-30" />
 
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-rose-500/20 rounded-lg">
-                            <AlertTriangle className="w-6 h-6 text-rose-500" />
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-bold text-white uppercase tracking-tighter">Points de Vigilance Cruciaux</h3>
-                            <p className="text-sm text-slate-500 tracking-tight">Veuillez examiner ces preuves avant toute validation finale</p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                        {/* Section 1: Documents Frauduleux */}
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3 px-2">
-                                <div className="w-1 h-8 bg-amber-500 rounded-full" />
-                                <h4 className="text-sm font-black text-amber-500 uppercase tracking-[0.2em]">Documents Frauduleux</h4>
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-rose-500/20 rounded-lg">
+                                <AlertTriangle className="w-6 h-6 text-rose-500" />
                             </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {fraudulentDocs.map((doc: any, i: number) => (
-                                    <GlassCard key={i} className="p-5 border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50 transition-all">
-                                        <div className="flex flex-col h-full justify-between gap-4">
-                                            <div className="space-y-3">
-                                                <div className="flex justify-between items-start">
-                                                    <div className="p-2 bg-black/40 rounded-lg">
-                                                        <FileText className="w-4 h-4 text-amber-400" />
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <p className="text-white font-bold text-sm tracking-tight">{doc.type}</p>
-                                                        <p className="text-[9px] text-slate-500 uppercase font-black">{new Date(doc.createdAt).toLocaleDateString()}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    <div className="bg-black/40 p-2 rounded-lg border border-rose-500/10">
-                                                        <p className="text-[8px] text-slate-500 uppercase font-black mb-1">OCR</p>
-                                                        <p className="text-xs font-bold text-rose-400">{Math.round(doc.ocrScore || 0)}%</p>
-                                                    </div>
-                                                    <div className="bg-black/40 p-2 rounded-lg border border-rose-500/10">
-                                                        <p className="text-[8px] text-slate-500 uppercase font-black mb-1">CLIP</p>
-                                                        <p className="text-xs font-bold text-rose-400">{Math.round(doc.clipScore || 0)}%</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <Button
-                                                variant="ghost"
-                                                className="w-full py-2 h-auto text-[10px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
-                                                onClick={() => setSelectedDocument(doc)}
-                                            >
-                                                Voir les détails
-                                            </Button>
-                                        </div>
-                                    </GlassCard>
-                                ))}
-                                {fraudulentDocs.length === 0 && (
-                                    <div className="p-8 border border-dashed border-slate-800 rounded-3xl flex items-center justify-center opacity-30 italic text-xs">
-                                        Aucun document frauduleux détecté.
-                                    </div>
-                                )}
+                            <div>
+                                <h3 className="text-xl font-bold text-white uppercase tracking-tighter">Points de Vigilance Cruciaux</h3>
+                                <p className="text-sm text-slate-500 tracking-tight">Veuillez examiner ces preuves avant toute validation finale</p>
                             </div>
                         </div>
 
-                        {/* Section 2: Mails Suspects */}
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-3 px-2">
-                                <div className="w-1 h-8 bg-rose-500 rounded-full" />
-                                <h4 className="text-sm font-black text-rose-500 uppercase tracking-[0.2em]">Emails Suspects</h4>
-                            </div>
+                        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                            {/* Section 1: Documents Frauduleux */}
+                            <div className="space-y-6">
+                                <div className="flex items-center gap-3 px-2">
+                                    <div className="w-1 h-8 bg-amber-500 rounded-full" />
+                                    <h4 className="text-sm font-black text-amber-500 uppercase tracking-[0.2em]">Documents Frauduleux</h4>
+                                </div>
 
-                            <div className="grid grid-cols-1 gap-4">
-                                {suspiciousEmails.map((email: any, i: number) => (
-                                    <GlassCard key={i} className="p-5 border-rose-500/30 bg-rose-500/5 hover:border-rose-500/50 transition-all">
-                                        <div className="flex flex-col md:flex-row gap-6">
-                                            <div className="flex-grow space-y-3">
-                                                <div className="flex items-start gap-4">
-                                                    <div className="p-2 bg-black/40 rounded-lg shrink-0">
-                                                        <Mail className="w-4 h-4 text-rose-400" />
+                                <div className="grid grid-cols-1 gap-4">
+                                    {fraudulentDocs.map((doc: any, i: number) => (
+                                        <GlassCard key={i} className="p-5 border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50 transition-all">
+                                            <div className="flex flex-col h-full justify-between gap-4">
+                                                <div className="space-y-3">
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="p-2 bg-black/40 rounded-lg">
+                                                            <FileText className="w-4 h-4 text-amber-400" />
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-white font-bold text-sm tracking-tight">{doc.type}</p>
+                                                            <p className="text-[9px] text-slate-500 uppercase font-black">{new Date(doc.createdAt).toLocaleDateString()}</p>
+                                                        </div>
                                                     </div>
-                                                    <div className="min-w-0">
-                                                        <p className="text-white font-bold text-sm truncate">{email.subject}</p>
-                                                        <p className="text-[10px] text-slate-500 uppercase font-black">{new Date(email.sentAt).toLocaleString()}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="bg-black/40 p-3 rounded-xl line-clamp-2 text-xs text-slate-400 italic font-medium leading-relaxed">
-                                                    "{email.body}"
-                                                </div>
-                                            </div>
-                                            <div className="shrink-0 w-full md:w-48 space-y-4">
-                                                <div className="space-y-2">
-                                                    <div className="flex justify-between text-[9px] font-black text-slate-500 uppercase tracking-tighter">
-                                                        <span>Stress</span>
-                                                        <span className="text-rose-400">{Math.round(email.ton_stress || 0)}%</span>
-                                                    </div>
-                                                    <div className="h-1 bg-slate-900 rounded-full overflow-hidden">
-                                                        <div className="h-full bg-rose-500" style={{ width: `${email.ton_stress}%` }} />
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        <div className="bg-black/40 p-2 rounded-lg border border-rose-500/10">
+                                                            <p className="text-[8px] text-slate-500 uppercase font-black mb-1">OCR</p>
+                                                            <p className="text-xs font-bold text-rose-400">{Math.round(doc.ocrScore || 0)}%</p>
+                                                        </div>
+                                                        <div className="bg-black/40 p-2 rounded-lg border border-rose-500/10">
+                                                            <p className="text-[8px] text-slate-500 uppercase font-black mb-1">CLIP</p>
+                                                            <p className="text-xs font-bold text-rose-400">{Math.round(doc.clipScore || 0)}%</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <Button
                                                     variant="ghost"
                                                     className="w-full py-2 h-auto text-[10px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
-                                                    onClick={() => setSelectedEmail(email)}
+                                                    onClick={() => setSelectedDocument(doc)}
                                                 >
-                                                    Consulter le mail
+                                                    Voir les détails
                                                 </Button>
                                             </div>
+                                        </GlassCard>
+                                    ))}
+                                    {fraudulentDocs.length === 0 && (
+                                        <div className="p-8 border border-dashed border-slate-800 rounded-3xl flex items-center justify-center opacity-30 italic text-xs">
+                                            Aucun document frauduleux détecté.
                                         </div>
-                                    </GlassCard>
-                                ))}
-                                {suspiciousEmails.length === 0 && (
-                                    <div className="p-8 border border-dashed border-slate-800 rounded-3xl flex items-center justify-center opacity-30 italic text-xs">
-                                        Aucun email suspect détecté.
-                                    </div>
-                                )}
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Section 2: Mails Suspects */}
+                            <div className="space-y-6">
+                                <div className="flex items-center gap-3 px-2">
+                                    <div className="w-1 h-8 bg-rose-500 rounded-full" />
+                                    <h4 className="text-sm font-black text-rose-500 uppercase tracking-[0.2em]">Emails Suspects</h4>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4">
+                                    {suspiciousEmails.map((email: any, i: number) => (
+                                        <GlassCard key={i} className="p-5 border-rose-500/30 bg-rose-500/5 hover:border-rose-500/50 transition-all">
+                                            <div className="flex flex-col gap-4">
+                                                <div className="space-y-3">
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="p-2 bg-black/40 rounded-lg shrink-0">
+                                                            <Mail className="w-4 h-4 text-rose-400" />
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <p className="text-white font-bold text-sm truncate">{email.subject}</p>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-black">{new Date(email.sentAt).toLocaleString()}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-black/40 p-3 rounded-xl line-clamp-2 text-xs text-slate-400 italic font-medium leading-relaxed font-mono">
+                                                        "{email.body}"
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <div className="flex justify-between text-[9px] font-black text-slate-500 uppercase tracking-tighter">
+                                                        <span>Stress Analysé</span>
+                                                        <span className="text-rose-400">{Math.round(email.ton_stress || 0)}%</span>
+                                                    </div>
+                                                    <div className="h-1 bg-slate-900 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-rose-500" style={{ width: `${email.ton_stress}%` }} />
+                                                    </div>
+                                                    <Button
+                                                        variant="ghost"
+                                                        className="w-full py-2 h-auto text-[10px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all mt-2"
+                                                        onClick={() => setSelectedEmail(email)}
+                                                    >
+                                                        Détails du mail
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </GlassCard>
+                                    ))}
+                                    {suspiciousEmails.length === 0 && (
+                                        <div className="p-8 border border-dashed border-slate-800 rounded-3xl flex items-center justify-center opacity-30 italic text-xs text-center">
+                                            Aucun email suspect détecté.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Section 3: Vocaux Suspects */}
+                            <div className="space-y-6">
+                                <div className="flex items-center gap-3 px-2">
+                                    <div className="w-1 h-8 bg-purple-500 rounded-full" />
+                                    <h4 className="text-sm font-black text-purple-500 uppercase tracking-[0.2em]">Vocaux Suspects</h4>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4">
+                                    {suspiciousVocals.map((vocal: any, i: number) => (
+                                        <GlassCard key={i} className="p-5 border-purple-500/30 bg-purple-500/5 hover:border-purple-500/50 transition-all">
+                                            <div className="flex flex-col gap-4">
+                                                <div className="space-y-3">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="p-2 bg-black/40 rounded-lg shrink-0">
+                                                            <Mic className="w-4 h-4 text-purple-400" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-white font-bold text-sm uppercase tracking-tighter">{vocal.fileName}</p>
+                                                            <p className="text-[10px] text-slate-500 uppercase font-black">{vocal.date}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-black/40 p-3 rounded-xl line-clamp-2 text-xs text-slate-400 italic font-medium leading-relaxed border-l-2 border-purple-500/50">
+                                                        "{vocal.transcript}"
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <div className="flex justify-between items-center bg-purple-500/10 p-2 rounded-lg border border-purple-500/20">
+                                                        <span className="text-[9px] font-black text-slate-500 uppercase">Alerte Émotion</span>
+                                                        <span className="text-[10px] font-bold text-purple-400">{vocal.emotion}</span>
+                                                    </div>
+                                                    {/* Fake Waveform miniature */}
+                                                    <div className="flex items-end justify-between h-4 gap-0.5 px-2 opacity-50 text-purple-500">
+                                                        {[20, 80, 40, 90, 30, 70, 50, 85, 45, 95].map((h, j) => (
+                                                            <div key={j} className="w-1 bg-current rounded-full" style={{ height: `${h}%` }} />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </GlassCard>
+                                    ))}
+                                    {suspiciousVocals.length === 0 && (
+                                        <div className="p-8 border border-dashed border-slate-800 rounded-3xl flex items-center justify-center opacity-30 italic text-xs text-center">
+                                            Aucune anomalie audio détectée.
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
         </div>
     );
 }
