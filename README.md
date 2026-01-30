@@ -18,29 +18,35 @@ La plateforme vise à assister les analystes dans :
 
 ## Structure du Projet
 
-### 1. Frontend (version synthétique)
+### 1. Frontend et backend 
 
-Le frontend présente une vision globale de la plateforme CreditSense AI.
+### a. Frontend ([frontend/](file:///d:/CreditSense%20Ai/frontend))
+Une application web moderne et réactive construite avec **Next.js 14**, **TypeScript** et **Tailwind CSS**.
 
-Fonctionnalités principales :
+*   **Tableau de Bord des Analystes** :
+    *   Vue d'ensemble de tous les dossiers de prêt avec indicateurs de statut.
+    *   Gestion des **Emails non associés** : Interface dédiée pour lier manuellement des messages entrants à des clients existants ou nouveaux.
+    *   Filtres avancés par niveau de risque et type de client (Individu/PME).
+*   **Module d'Analyse Profonde** :
+    *   **Score de Crédit IA** : Recommandation (Accorder/Refuser) basée sur les modèles de Scoring.
+    *   **Détection de Fraude Documentaire** : Visualisation des scores CLIP (visuel) et OCR (textuel) pour chaque document soumis.
+    *   **Justification IA** : Explication détaillée du "Pourquoi" derrière chaque décision de l'IA.
+    *   **Contrôle Manuel** : Possibilité pour l'analyste de forcer une décision ou de demander une re-analyse d'un document spécifique.
+*   **Gestion Intelligente des Emails** :
+    *   Aperçu des échanges avec le client.
+    *   **Auto-Reply IA** : Génération de réponses contextuelles basées sur le statut du dossier (ex: demande de documents manquants).
+*   **Espace Analyste** :
+    *   Authentification sécurisée.
+    *   Système de messagerie interne pour la collaboration sur les dossiers sensibles.
 
-* Dashboard de suivi des prêts :
-
-  * état du prêt,
-  * alertes de risque,
-  * décisions prises par les analystes.
-* Page d'analyse détaillée (au clic sur un prêt) :
-
-  * pourcentage de risque,
-  * recommandation IA (accorder ou refuser le crédit),
-  * justification de la décision (pourquoi oui / pourquoi non),
-  * documents détectés comme fraudés avec leurs pourcentages de crédibilité.
-* Section paramètres :
-
-  * intégration d'APIs externes (emails, plateformes bancaires, etc.).
-* Authentification des analystes (login sécurisé).
-
----
+### b. Backend ([backend/](file:///d:/CreditSense%20Ai/backend))
+Le moteur central de l'application, assurant la persistance et la logique métier.
+* **Technologies** : Node.js, **MySQL**, **Prisma ORM**.
+* **Authentification** : Gestion sécurisée du login des analystes.
+* **Gestion des Clients** : Profils complets, scores de risque et classification.
+* **Gestion des Documents** : Suivi rigoureux du statut des pièces jointes (en attente, validé, rejeté).
+* **Communication Inter-Analystes** : Messagerie intégrée pour collaborer sur les dossiers.
+* **Gestion des Emails** : Synchronisation avec Gmail, extraction de données et réponses automatiques.
 
 ### 2. Module de Vérification de Documents (module-verification-docs)
 
