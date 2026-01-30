@@ -96,8 +96,8 @@ class ProcessingMetadata(Base):
     # Features acoustiques (moyennes)
     pitch_mean = Column(Float, nullable=True)  # fréquence fondamentale moyenne (Hz)
     speech_rate = Column(Float, nullable=True)  # mots par minute
-    pause_count = Column(Integer, nullable=True)  # nombre de pauses
-    energy_level = Column(Float, nullable=True)  # niveau d'énergie vocale
+    pause_rate = Column(Float, nullable=True)  # ratio silence/durée
+    energy_db = Column(Float, nullable=True)  # énergie vocale en dB
     
     # Scoring final (calculé avec Qdrant)
     solvability_score = Column(Float, nullable=True)  # 0 à 100

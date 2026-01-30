@@ -10,10 +10,11 @@ import os
 import uuid
 from pathlib import Path
 from datetime import datetime
-
+from app.workers.audio_worker import process_audio
 from app.db.session import get_db
 from app.db.models import Audio, AudioStatus
 from app.core.config import AUDIO_STORAGE_PATH, ALLOWED_AUDIO_EXTENSIONS, MAX_AUDIO_FILE_SIZE_MB
+from app.services.qdrant_service import get_qdrant_service
 
 router = APIRouter()
 
@@ -111,7 +112,8 @@ async def upload_audio(
             status_code=500,
             detail=f"Erreur lors de l'enregistrement en base de données : {str(e)}"
         )
-    
+    # 7. Déclencher le traitement asynchrone avec Celery
+    process_audio.delay(audio_entry.id)
     return {
         "status": "success",
         "message": "Audio uploadé avec succès",
@@ -247,3 +249,141 @@ def list_audios(
             for audio in audios
         ]
     }
+
+@router.post("/predict")
+async def predict_score(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+) -> Dict:
+    """
+    Prédit le score de solvabilité d'un nouveau fichier basé sur les 5 voisins les plus proches (k-NN)
+    Le fichier est traité à la volée mais NON ENREGISTRÉ en base de données de manière permanente.
+    """
+    from app.services.audio_processing import get_audio_processor
+    
+    # 1. Validation basique
+    file_extension = Path(file.filename).suffix.lower()
+    if file_extension not in ALLOWED_AUDIO_EXTENSIONS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Format non supporté. Formats acceptés : {', '.join(ALLOWED_AUDIO_EXTENSIONS)}"
+        )
+    
+    # 2. Sauvegarde temporaire du fichier pour traitement
+    temp_filename = f"temp_predict_{uuid.uuid4()}{file_extension}"
+    temp_path = AUDIO_STORAGE_PATH / temp_filename
+    
+    try:
+        content = await file.read()
+        with open(temp_path, "wb") as f:
+            f.write(content)
+            
+        # 3. Traitement complet (Extraction features + Embedding)
+        processor = get_audio_processor()
+        # On utilise process_complete qui fait tout (transcription, features, embedding)
+        results = processor.process_complete(str(temp_path))
+        
+        # 4. Récupérer le vecteur généré
+        target_vector = results["embedding"]
+        
+        # 5. Interroger Qdrant
+        qdrant = get_qdrant_service()
+        similar_audios = qdrant.search_similar_audios(
+            query_vector=target_vector,
+            limit=5, # On prend les 5 plus proches (pas besoin d'exclure soi-même car on n'est pas en base)
+            score_threshold=0.5 
+        )
+        
+        if not similar_audios:
+            return {
+                "filename": file.filename,
+                "prediction_status": "insufficient_data",
+                "message": "Aucun voisin similaire trouvé.",
+                "predicted_scores": None
+            }
+
+        # 6. Calculer la moyenne des scores des voisins
+        def get_avg(key, default=0.0):
+            values = [n["metadata"].get(key, default) for n in similar_audios]
+            # Filtrer les None
+            valid_values = [v for v in values if v is not None]
+            return sum(valid_values) / len(valid_values) if valid_values else default
+
+        avg_stress = get_avg("stress_level", 0.5)
+        avg_confidence = get_avg("confidence_level", 0.5)
+        avg_sentiment = get_avg("sentiment_score", 0.0)
+        avg_coherence = get_avg("coherence_score", 0.5)
+        
+        # Features acoustiques moyennes
+        avg_pitch = get_avg("pitch_mean", 0.0)
+        avg_energy = get_avg("energy_db", -20.0)
+        avg_speech = get_avg("speech_rate", 120.0)
+        avg_pause = get_avg("pause_rate", 0.1)
+        
+        print(f"\n🔮 PRÉDICTION TERMINÉE")
+        print(f"   Voisins utilisés : {len(similar_audios)}")
+        print(f"   Stress Prédit    : {avg_stress:.2f}")
+        print(f"   Confiance Prédite: {avg_confidence:.2f}")
+        print(f"   Sentiment Prédit : {avg_sentiment:.2f}")
+        
+        # Formater la réponse
+        neighbors_details = [
+            {
+                "audio_id": n["audio_id"],
+                "similarity": n["similarity_score"],
+                "stress": n["metadata"].get("stress_level"),
+                "confidence": n["metadata"].get("confidence_level"),
+                "features": {
+                    "pitch_mean": n["metadata"].get("pitch_mean"),
+                    "energy_db": n["metadata"].get("energy_db"),
+                    "speech_rate": n["metadata"].get("speech_rate"),
+                    "pause_rate": n["metadata"].get("pause_rate")
+                }
+            }
+            for n in similar_audios
+        ]
+        
+        # Scores de ce fichier (calculés par l'algo, pas prédits)
+        current_file_scores = {
+            "stress_level": results["behavioral_scores"]["stress_level"],
+            "confidence_level": results["behavioral_scores"]["confidence_level"],
+            "sentiment_score": results["sentiment"]["sentiment_score"]
+        }
+        
+        return {
+            "prediction_status": "success",
+            "neighbors_count": len(similar_audios),
+            "current_analysis": current_file_scores, # Les scores basés sur l'algo classique
+            "predicted_scores": {
+                "stress_level": avg_stress,
+                "confidence_level": avg_confidence,
+                "sentiment_score": avg_sentiment,
+                "coherence_score": avg_coherence,
+                "creditworthiness_probability": avg_confidence * (1 - avg_stress),
+                "acoustic_averages": {
+                    "pitch_mean": avg_pitch,
+                    "energy_db": avg_energy,
+                    "speech_rate": avg_speech,
+                    "pause_rate": avg_pause
+                }
+            },
+            "target_audio_features": {
+                 "pitch_mean": results["acoustic_features"]["pitch_mean"],
+                 "energy_db": results["acoustic_features"]["energy_db"],
+                 "speech_rate": results["acoustic_features"]["speech_rate"],
+                 "pause_rate": results["acoustic_features"]["pause_rate"]
+            },
+            "nearest_neighbors": neighbors_details
+        }
+        
+    except Exception as e:
+        print(f"❌ Erreur prédiction : {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+        
+    finally:
+        # 7. Nettoyage du fichier temporaire
+        if temp_path.exists():
+            try:
+                os.remove(temp_path)
+            except:
+                pass

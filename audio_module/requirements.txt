@@ -1,10 +1,43 @@
 # Ce fichier liste les dépendances Python nécessaires pour le module audio.
+# Dépendances pour le module audio CreditSense AI
+
+# Framework web
 fastapi
-uvicorn
+uvicorn[standard]
+
+# Upload de fichiers
 python-multipart
+
+# Base de données
 sqlalchemy
+
+# Validation de données
 pydantic
-celery
+
+# Tâches asynchrones
+celery[redis]
 redis
-sqlalchemy
+
+# Utilitaires
+python-dotenv
+
+# === NOUVELLES DÉPENDANCES POUR ÉTAPE 6 ===
+
+# Traitement audio
+openai-whisper
+librosa
+soundfile
+pydub
+
+# Analyse NLP et sentiment
+transformers
+torch
+sentencepiece
+
+# Génération embeddings pour Qdrant
+sentence-transformers
+
+# Utilitaires scientifiques
+numpy
+scipy
 
